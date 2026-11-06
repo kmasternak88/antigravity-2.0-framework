@@ -63,6 +63,8 @@ __all__ = [
     "ProjectExtensionContext",
     "ASTImpactAnalyzer",
     "validate_currency_invariants",
+    "validate_grill_me_session",
+    "merge_tasks_dag",
     "compute_next_task_ids",
     "check_governance_state",
     "merge_dag_kahn",

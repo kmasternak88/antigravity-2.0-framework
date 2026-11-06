@@ -17,7 +17,16 @@ __all__ = [
     "IngestionParser",
     "FORBIDDEN_ENTITY_WORDS",
     "ARCHETYPE_DEFAULT_ENTITIES",
+    "FIVE_INVARIANT_VECTORS",
     "main",
+]
+
+FIVE_INVARIANT_VECTORS = [
+    "ONE_WAY_DOORS_STORAGE",
+    "FINANCIAL_MONEY_INVARIANTS",
+    "RESILIENCE_AND_UNWANTED_EARS",
+    "SRE_RESOURCE_LIMITS",
+    "PANEL_PERMISSIONS_WCAG",
 ]
 
 FORBIDDEN_ENTITY_WORDS = {
@@ -78,6 +87,10 @@ class IngestionContext:
     classification: str = "RAW_SEED"  # RAW_SEED | PARTIAL_SPEC | COMPREHENSIVE_PRD
     one_way_door_questions: List[str] = field(default_factory=list)
     autonomous_adrs: List[Dict[str, str]] = field(default_factory=list)
+    grill_me_required: bool = True
+    grounded_invariants: List[str] = field(default_factory=list)
+    missing_invariants: List[str] = field(default_factory=list)
+    grill_me_bypass_reason: Optional[str] = None
 
 class IngestionParser:
     @staticmethod
@@ -97,7 +110,7 @@ class IngestionParser:
                 for p in sub_dir.glob("*.md"):
                     if p.is_file():
                         candidates.append(p)
-        
+
         # Sort by priority: explicit 'prd' or 'spec' over 'README.md'
         def score_candidate(path: Path) -> int:
             name = path.name.lower()
@@ -118,15 +131,21 @@ class IngestionParser:
 
         # 1. Check if input points to an existing file
         if input_str_or_path:
-            target_p = Path(input_str_or_path)
-            if not target_p.is_absolute():
-                target_p = (ws / target_p).resolve()
-            
-            if target_p.is_file():
-                ctx.source_type = "file"
-                ctx.source_path = str(target_p)
-                ctx.raw_content = target_p.read_text(encoding="utf-8")
-            else:
+            is_file = False
+            if "\n" not in input_str_or_path and len(input_str_or_path) < 260:
+                try:
+                    target_p = Path(input_str_or_path)
+                    if not target_p.is_absolute():
+                        target_p = (ws / target_p).resolve()
+                    if target_p.is_file():
+                        is_file = True
+                        ctx.source_type = "file"
+                        ctx.source_path = str(target_p)
+                        ctx.raw_content = target_p.read_text(encoding="utf-8")
+                except (OSError, ValueError):
+                    is_file = False
+
+            if not is_file:
                 ctx.source_type = "brief"
                 ctx.raw_content = input_str_or_path
         else:
@@ -231,6 +250,9 @@ class IngestionParser:
         else:
             ctx.classification = "COMPREHENSIVE_PRD"
 
+        # 9. Evaluate Adaptive Socratic Flow & 5 Invariant Vectors
+        cls._evaluate_invariant_vectors(ctx)
+
     @classmethod
     def _populate_autonomous_adrs(cls, ctx: IngestionContext):
         """Formulate deterministic architectural decision records tailored to domain archetype."""
@@ -320,6 +342,61 @@ class IngestionParser:
             "3. [RYGORYSTYCZNY REGULATOR]: Czy system podlega pod specyficzne regulacje (takie jak RODO/GDPR, KNF, HIPAA), wymagające natychmiastowego szyfrowania w spoczynku i prawa do bycia zapomnianym? [Domyślnie: Standard GDPR-compliant audit trail]"
         ]
 
+    @classmethod
+    def _evaluate_invariant_vectors(cls, ctx: IngestionContext):
+        """Adaptive Socratic Flow: check whether the input explicitly grounds the 5 Invariant Vectors.
+        If all 5 vectors are grounded, Grill-Me can be safely bypassed.
+        """
+        c_lower = ctx.raw_content.lower()
+
+        grounded = []
+        missing = []
+
+        # 1. One-Way Doors & Storage
+        if any(w in c_lower for w in ["postgresql", "sqlite", "mysql", "hpos", "database", "baza danych", "tabela", "relacyjn", "dynamodb", "mongodb"]):
+            grounded.append("ONE_WAY_DOORS_STORAGE")
+        else:
+            missing.append("ONE_WAY_DOORS_STORAGE")
+
+        # 2. Financial / Money Invariants (Rule 50 DREE)
+        has_money_concept = any(w in c_lower for w in ["płatno", "payment", "cena", "kwota", "cents", "grosze", "stripe", "billing", "subskryp", "faktur"])
+        if has_money_concept:
+            if any(w in c_lower for w in ["cents", "grosze", "minor units", "integer cents", "zero-float", "amount_cents", "bez float"]):
+                grounded.append("FINANCIAL_MONEY_INVARIANTS")
+            else:
+                missing.append("FINANCIAL_MONEY_INVARIANTS")
+        else:
+            # Domain does not involve money -> trivially satisfied
+            grounded.append("FINANCIAL_MONEY_INVARIANTS")
+
+        # 3. Resilience & Unwanted Behavior (EARS Unwanted / Failures)
+        if any(w in c_lower for w in ["if ", "jeśli", "failure", "awaria", "timeout", "retry", "circuit breaker", "domainerror", "błąd", "error", "unwanted"]):
+            grounded.append("RESILIENCE_AND_UNWANTED_EARS")
+        else:
+            missing.append("RESILIENCE_AND_UNWANTED_EARS")
+
+        # 4. SRE & Resource Limits
+        if any(w in c_lower for w in ["ms", "timeout", "limit", "rps", "tps", "pamięć", "memory", "rate limit", "5000ms"]):
+            grounded.append("SRE_RESOURCE_LIMITS")
+        else:
+            missing.append("SRE_RESOURCE_LIMITS")
+
+        # 5. Panel / Permissions / WCAG / Roles
+        if any(w in c_lower for w in ["admin", "dashboard", "panel", "rola", "role", "wcag", "uprawnien", "rbac", "permissions", "capabilities", "current_user_can"]):
+            grounded.append("PANEL_PERMISSIONS_WCAG")
+        else:
+            missing.append("PANEL_PERMISSIONS_WCAG")
+
+        ctx.grounded_invariants = grounded
+        ctx.missing_invariants = missing
+
+        if len(missing) == 0 and ctx.ims_score > 0.70:
+            ctx.grill_me_required = False
+            ctx.grill_me_bypass_reason = "Grill-Me Bypassed: All 5 Invariant Vectors explicitly grounded in input PRD"
+        else:
+            ctx.grill_me_required = True
+            ctx.grill_me_bypass_reason = None
+
 def main():
     parser = argparse.ArgumentParser(description="Ingestion Node & IMS Parser v8.1")
     parser.add_argument("input", nargs="?", help="Input brief text or path to markdown file")
@@ -334,7 +411,7 @@ def main():
     target_input = args.prd or args.brief or args.input
 
     ctx = IngestionParser.parse_input(target_input, ws)
-    
+
     if args.json:
         print(json.dumps(asdict(ctx), indent=2, ensure_ascii=False))
     else:

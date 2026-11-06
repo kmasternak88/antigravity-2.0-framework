@@ -28,31 +28,31 @@ Może być uruchamiany samodzielnie (`/grill-me`) lub jako integralna faza polec
 
 ## 🔍 5 WYMIARÓW WYWIADU SOKRATEJSKIEGO
 
-Podczas sesji `/grill-me` agent bada dokładnie 5 krytycznych wymiarów:
+Podczas sesji `/grill-me` agent bada dokładnie 5 krytycznych wymiarów (5 Invariant Vectors):
 
-### 1. One-Way Doors & Magazyn Danych
-- Jaki model persystencji jest wymagany? (Relacyjny PostgreSQL/SQLite z ACID vs Dziennik zdarzeń Append-Only vs Cache In-Memory).
+### 1. One-Way Doors & Magazyn Danych (ONE_WAY_DOORS_STORAGE)
+- Jaki model persystencji jest wymagany? (Relacyjny PostgreSQL/SQLite z ACID, HPOS dla WooCommerce vs Dziennik zdarzeń Append-Only vs Cache In-Memory).
 - Jaka jest strategia migracji i izolacji danych (np. multi-tenancy przez pole `tenant_id` vs odrębne schematy)?
 
-### 2. Inwarianty Finansowe i Kwoty Pieniężne (Reguła 50 DREE)
+### 2. Inwarianty Finansowe i Kwoty Pieniężne (FINANCIAL_MONEY_INVARIANTS - Reguła 50 DREE)
 - Czy funkcja dotyka jakichkolwiek płatności, faktur, sald, subskrypcji lub limitów budżetowych?
 - **Żelazna Reguła 50 DREE:** Wszystkie kwoty pieniężne MUSZĄ być reprezentowane jako liczby całkowite w jednostkach podrzędnych (`integer minor`, np. grosze, centy). Bezwzględny zakaz typów `float`/`double`.
 - Wymóg nagłówka i klucza idempotencji (`X-Idempotency-Key`) dla operacji mutujących finanse.
 
-### 3. Kontrakty API, Modele DTO i Obsługa Błędów
-- Format wymiany danych (REST/JSON vs Event Bus/Webhooks).
-- Niezmienność kontraktów: Wymóg DTO z `slots=True, frozen=True` oraz walidacja w `__post_init__`.
-- Dedykowane wyjątki domenowe dziedziczące po `DomainError` (zakaz gołych `Exception` / `any`).
+### 3. Granice Odporności i Zachowania Niepożądane (RESILIENCE_AND_UNWANTED_EARS)
+- Ścisłe zdefiniowanie zachowań awaryjnych w składni EARS Unwanted behavior (`IF awaria THEN DomainError`).
+- Dedykowane wyjątki domenowe dziedziczące po `DomainError` (zakaz surowych `except: pass`).
 
-### 4. SRE, Odporność i Limity Zasobów
-- Ścisły timeout dla wywołań (domyślnie 5000ms).
-- Zachowanie przy awarii systemów zależnych: Fail-Closed (odrzucenie żądania) vs Circuit Breaker vs Fallback Cache.
+### 4. SRE, Odporność i Ograniczenia Zasobów (SRE_RESOURCE_LIMITS)
+- Ścisły timeout dla wywołań (domyślnie 5000ms), rate limiting i budżety pamięci.
+- Zachowanie przy awarii systemów zależnych: Fail-Closed (odrzucenie żądania) vs Circuit Breaker.
 - Polityka ponowień: Exponential Backoff z Full Jitter.
-- Graceful Shutdown i obsługa sygnałów SIGTERM.
 
-### 5. Kompatybilność Wsteczna i Granice Domenowe (EARS)
-- Czy rozszerzenie jest w 100% addytywne, czy modyfikuje istniejące sygnatury metod lub bazy danych?
-- Ścisłe zdefiniowanie granic w składni EARS (Ubiquitous, Event-driven, State-driven, Unwanted behavior, Optional feature, Complex).
+### 5. Architektura Panelu, Uprawnień i Dostępności (PANEL_PERMISSIONS_WCAG)
+- Moduł panelu administracyjnego (Admin Dashboard & Settings, sub-menu, formularze opcji).
+- Wymogi UI/UX: paleta barwna OKLCH, dostępność WCAG 2.1 AA (cele dotykowe min. 48px), walidacja uprawnień RBAC / `current_user_can()`.
+
+> **Adaptive Socratic Flow (Bypass Rule):** Jeśli dostarczony brief/PRD jednoznacznie uziemia wszystkie 5 Wektorów Niezmienników (IMS > 0.70), faza zadawania pytań zostaje automatycznie pominięta (`Grill-Me Bypassed: All 5 Invariant Vectors explicitly grounded in input PRD`), a agent przystępuje natychmiast do kompilacji blueprintu.
 
 ---
 
