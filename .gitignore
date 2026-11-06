@@ -1,0 +1,32 @@
+# Security & Secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+antigravity_accounts.json
+secrets/
+
+# Python & Runtime artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+build/
+dist/
+*.egg-info/
+
+# Governance temporary state & shadow worktrees
+.governance/state/
+.governance/evidence/
+.shadow_worktrees/
+
+# IDE & System
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

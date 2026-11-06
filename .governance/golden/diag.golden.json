@@ -1,0 +1,8 @@
+{
+  "name": "diag",
+  "command": "C:\\Users\\lpiku\\AppData\\Local\\Programs\\Python\\Python312\\python.exe -c \"print(\"UUID: 11111111-2222-3333-4444-555555555555 Date: 2026-11-02T10:00:00Z Status: PASS\")\"",
+  "exitCode": 1,
+  "outputDigest": "2129c23c1364acb9317dbc5d98b380cf7d23a78b903712be03254e83bb1f1c68",
+  "maskedOutput": "File \"<string>\", line 1\r\n    \"print(\"UUID:\r\n            ^^^^\r\nSyntaxError: invalid syntax",
+  "recordedAt": 1793641442.7338905
+}

@@ -1,0 +1,45 @@
+{
+  "$schema": "./page.blueprint.schema.json",
+  "pageId": "pages.checkout",
+  "title": "Zamówienie i Płatność",
+  "targetFile": "src/pages/CheckoutPage.tsx",
+  "adapter": "react-typescript",
+  "layout": "layouts.storefront",
+  "taxonomy": {
+    "cssPrefix": "cw-checkout-",
+    "viewModelType": "CheckoutPageProps",
+    "stateStoreHook": "useCheckoutStore"
+  },
+  "slots": {
+    "main_content": {
+      "order": 1,
+      "components": [
+        {
+          "component": "OrderSummary",
+          "propBindings": {
+            "items": "props.cart.items",
+            "currency": "props.cart.currency",
+            "totalAmount": "props.cart.total"
+          }
+        },
+        {
+          "component": "PaymentForm",
+          "propBindings": {
+            "clientSecret": "props.payment.clientSecret",
+            "onSuccess": "handlers.handlePaymentSuccess"
+          }
+        }
+      ]
+    }
+  },
+  "requiredAssets": [
+    "vendor.stripe-js",
+    "styles.checkout-summary",
+    "styles.payment-form"
+  ],
+  "requiredImports": [
+    "import React, { FC } from 'react';",
+    "import { useCheckoutStore } from '@/stores/useCheckoutStore';",
+    "import { CheckoutPageProps } from '@/types/checkout.types';"
+  ]
+}

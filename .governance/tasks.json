@@ -1,0 +1,62 @@
+{
+  "version": 1,
+  "tasks": [
+    {
+      "id": "T001",
+      "title": "Zweryfikuj instalację frameworka; zastąp backlog przed pracą produktową",
+      "depends_on": [],
+      "allowed_paths": [
+        "tests"
+      ],
+      "checks": [
+        "framework-selftests"
+      ],
+      "acceptance": [
+        "AC-FW-001"
+      ],
+      "risk": "low",
+      "standards_checklist": [
+        "interface_contract",
+        "input_validation",
+        "domain_exception",
+        "pure_logic_srp",
+        "telemetry_logging",
+        "dual_test_suite",
+        "export_registration"
+      ]
+    },
+    {
+      "id": "task-module-payment-processor",
+      "title": "Implementacja modulu PaymentProcessor",
+      "domain": "billing",
+      "symbols": [
+        "PaymentProcessorRequest",
+        "payment_processor"
+      ],
+      "routes": [
+        "/api/v1/billing/payment-processor"
+      ],
+      "allowed_paths": [
+        "src/billing/payment_processor.py",
+        "tests/test_payment_processor.py"
+      ],
+      "depends_on": [],
+      "checks": [
+        "unit"
+      ],
+      "acceptance": [
+        "Modul PaymentProcessor spelnia kontrakt billing_payment_processor.contract",
+        "Testy jednostkowe przechodza pomyslnie"
+      ],
+      "standards_checklist": [
+        "interface_contract",
+        "input_validation",
+        "domain_exception",
+        "pure_logic_srp",
+        "telemetry_logging",
+        "dual_test_suite",
+        "export_registration"
+      ]
+    }
+  ]
+}

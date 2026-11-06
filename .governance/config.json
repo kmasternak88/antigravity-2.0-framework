@@ -1,0 +1,42 @@
+{
+  "version": 3,
+  "profile": "standard",
+  "spec_files": [
+    ".specify/specs/01_CHARTER.md",
+    ".specify/specs/02_ARCHITECTURE.md",
+    ".specify/specs/03_ACCEPTANCE.md"
+  ],
+  "max_parallel": 1,
+  "lease_seconds": 1800,
+  "protected_paths": [
+    ".agents",
+    ".governance",
+    ".github",
+    "AGENTS.md"
+  ],
+  "checks": {
+    "framework-selftests": {
+      "argv": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-v"
+      ],
+      "timeout": 120
+    },
+    "unit": {
+      "argv": [
+        "python",
+        "-m",
+        "unittest"
+      ],
+      "timeout": 60
+    }
+  },
+  "required_release_checks": [
+    "framework-selftests"
+  ]
+}

@@ -1,0 +1,65 @@
+{
+  "status": "HANDOFF_GENERATED",
+  "workspaceContext": {
+    "workspaceRoot": "D:/hermes-workspaces/55. agentic-framework-antigravityv3/antigravity-v3-evidence-driven-framework",
+    "workspaceUri": "file:///D:/hermes-workspaces/55. agentic-framework-antigravityv3/antigravity-v3-evidence-driven-framework",
+    "boundaryPolicy": "STRICT_HERMETIC"
+  },
+  "activeDecisions": [],
+  "leasedSymbols": [],
+  "leasedRoutes": [],
+  "templateContract": null,
+  "taskId": "T001",
+  "taskName": "Zweryfikuj instalację frameworka; zastąp backlog przed pracą produktową",
+  "specDigest": "9c78fabd5fdbf75ea8e70ba0ebd9e21cfbe2e0abb116984a3a3842054c57c341",
+  "packetPath": ".governance/handoffs/T001.json",
+  "handoffPath": ".governance/handoffs/T001.json",
+  "targetFiles": {
+    "readOnly": [
+      ".specify/specs/01_CHARTER.md",
+      ".specify/specs/02_ARCHITECTURE.md",
+      ".specify/specs/03_ACCEPTANCE.md",
+      "contracts/billing_payment_processor.contract.ts",
+      "contracts/models.py",
+      "contracts/openapi.json",
+      "contracts/types.ts",
+      "specs/RECONSTRUCTED_SPEC.md"
+    ],
+    "allowedToWrite": [
+      "tests"
+    ]
+  },
+  "blastRadius": {
+    "target": "tests",
+    "directSymbols": [],
+    "downstreamDependents": [],
+    "affectedChecks": [
+      "framework-selftests"
+    ],
+    "riskRating": "LOW"
+  },
+  "acceptanceCriteria": [
+    {
+      "id": "AC-01",
+      "assertion": "AC-FW-001",
+      "testCommand": "python -m unittest discover -s tests -v"
+    }
+  ],
+  "standardsChecklist": [
+    "interface_contract",
+    "input_validation",
+    "domain_exception",
+    "pure_logic_srp",
+    "telemetry_logging",
+    "dual_test_suite",
+    "export_registration"
+  ],
+  "mockContext": {
+    "mockServerUrl": "http://127.0.0.1:4010",
+    "governanceProfile": "standard"
+  },
+  "executionBudget": {
+    "maxAttemptCycles": 3,
+    "timeoutSeconds": 1800
+  }
+}

@@ -1,0 +1,1007 @@
+{
+  "languages": {
+    "Python": 23,
+    "TypeScript": 2
+  },
+  "frameworks": [],
+  "routes": [
+    {
+      "method": "ROUTE",
+      "path": ".agents/skills/init/scripts/detect_state.py",
+      "source": ".agents/skills/init/template/.agents/skills/init/SKILL.md"
+    }
+  ],
+  "models": [
+    {
+      "name": "PaymentProcessorPayload",
+      "source": "contracts/billing_payment_processor.contract.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "PaymentProcessorResult",
+      "source": "contracts/billing_payment_processor.contract.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "IPaymentProcessorService",
+      "source": "contracts/billing_payment_processor.contract.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "PaymentProcessorPayload",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "PaymentProcessorResult",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "IPaymentProcessorService",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "PaymentProcessorPayload",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "PaymentProcessorResult",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "IPaymentProcessorService",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "PaymentProcessorPayload",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "PaymentProcessorResult",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "IPaymentProcessorService",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "PaymentProcessorPayload",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "PaymentProcessorResult",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "IPaymentProcessorService",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "PaymentProcessorPayload",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "PaymentProcessorResult",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "IPaymentProcessorService",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "PaymentProcessorPayload",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "PaymentProcessorResult",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "IPaymentProcessorService",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "PaymentProcessorPayload",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "PaymentProcessorResult",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "IPaymentProcessorService",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "PaymentProcessorPayload",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "PaymentProcessorResult",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "IPaymentProcessorService",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "PaymentProcessorPayload",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "PaymentProcessorResult",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "IPaymentProcessorService",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "PaymentProcessorPayload",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "PaymentProcessorResult",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "IPaymentProcessorService",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "PaymentProcessorPayload",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "PaymentProcessorResult",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "IPaymentProcessorService",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "PaymentProcessorPayload",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "PaymentProcessorResult",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "IPaymentProcessorService",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "PaymentProcessorPayload",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "PaymentProcessorResult",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "IPaymentProcessorService",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "PaymentProcessorPayload",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "PaymentProcessorResult",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "IPaymentProcessorService",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "PaymentProcessorPayload",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "PaymentProcessorResult",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "IPaymentProcessorService",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "PaymentProcessorPayload",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "PaymentProcessorResult",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "IPaymentProcessorService",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "PaymentProcessorPayload",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "PaymentProcessorResult",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "IPaymentProcessorService",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "PaymentProcessorPayload",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "PaymentProcessorResult",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "IPaymentProcessorService",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "PaymentProcessorPayload",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "PaymentProcessorResult",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "IPaymentProcessorService",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "PaymentProcessorPayload",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "PaymentProcessorResult",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "IPaymentProcessorService",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "PaymentProcessorPayload",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "PaymentProcessorResult",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "IPaymentProcessorService",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "PaymentProcessorPayload",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "PaymentProcessorResult",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "IPaymentProcessorService",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "PaymentProcessorPayload",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "PaymentProcessorResult",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "IPaymentProcessorService",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "PaymentProcessorPayload",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "PaymentProcessorResult",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "IPaymentProcessorService",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "PaymentProcessorPayload",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "PaymentProcessorResult",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "IPaymentProcessorService",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "PaymentProcessorPayload",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "PaymentProcessorResult",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "IPaymentProcessorService",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "PaymentProcessorPayload",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "PaymentProcessorResult",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "IPaymentProcessorService",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "PaymentProcessorPayload",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "PaymentProcessorResult",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "IPaymentProcessorService",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "PaymentProcessorPayload",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "PaymentProcessorResult",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "IPaymentProcessorService",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "PaymentProcessorPayload",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "PaymentProcessorResult",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "IPaymentProcessorService",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "PaymentProcessorPayload",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "PaymentProcessorResult",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "IPaymentProcessorService",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "PaymentProcessorPayload",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "PaymentProcessorResult",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "IPaymentProcessorService",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "PaymentProcessorPayload",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "PaymentProcessorResult",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "IPaymentProcessorService",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "PaymentProcessorPayload",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "PaymentProcessorResult",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "IPaymentProcessorService",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "PaymentProcessorPayload",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "PaymentProcessorResult",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "IPaymentProcessorService",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "PaymentProcessorPayload",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "PaymentProcessorResult",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "IPaymentProcessorService",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "PaymentProcessorPayload",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "PaymentProcessorResult",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "IPaymentProcessorService",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "PaymentProcessorPayload",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "PaymentProcessorResult",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "IPaymentProcessorService",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "PaymentProcessorPayload",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "PaymentProcessorResult",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "IPaymentProcessorService",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "PaymentProcessorPayload",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "PaymentProcessorResult",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "IPaymentProcessorService",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "PaymentProcessorPayload",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "PaymentProcessorResult",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "IPaymentProcessorService",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "PaymentProcessorPayload",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "PaymentProcessorResult",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "IPaymentProcessorService",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "PaymentProcessorPayload",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "PaymentProcessorResult",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "IPaymentProcessorService",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "PaymentProcessorPayload",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "PaymentProcessorResult",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "IPaymentProcessorService",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "PaymentProcessorPayload",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "PaymentProcessorResult",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "IPaymentProcessorService",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "PaymentProcessorPayload",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "PaymentProcessorResult",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "IPaymentProcessorService",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "EntityBase",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    },
+    {
+      "name": "ApiResponse",
+      "source": "contracts/types.ts",
+      "kind": "TS_INTERFACE"
+    }
+  ],
+  "tests": [
+    {
+      "file": "tests/test_billing_service.py",
+      "cases": [
+        "test_billing_service_happy_path",
+        "test_billing_service_validation_failure_empty_id",
+        "test_billing_service_validation_failure_negative_amount"
+      ]
+    },
+    {
+      "file": "tests/test_genesis_v81.py",
+      "cases": [
+        "test_ingestion_parser_raw_brief",
+        "test_zero_placeholder_linter",
+        "test_hierarchical_phase_6_parsing",
+        "test_dag_acyclic_and_topological_sort",
+        "test_disjoint_parallel_paths_validation",
+        "test_compile_blueprint_full_lifecycle"
+      ]
+    },
+    {
+      "file": "tests/test_governance.py",
+      "cases": [
+        "test_valid_dag",
+        "test_cycle_rejected",
+        "test_unknown_dependency",
+        "test_path_traversal",
+        "test_unbounded_path",
+        "test_claim_requires_spec_lock",
+        "test_spec_edit_invalidates_lock",
+        "test_task_edit_invalidates_lock",
+        "test_config_edit_invalidates_lock",
+        "test_dependency_not_done",
+        "test_overlapping_claims",
+        "test_stale_fencing_token",
+        "test_expired_lease_takeover",
+        "test_real_process_evidence",
+        "test_failing_process_blocks_gate",
+        "test_timeout_records_124",
+        "test_source_mutating_test_invalid",
+        "test_stale_evidence_after_edit",
+        "test_self_review_rejected",
+        "test_no_review_no_gate",
+        "test_valid_review_finish",
+        "test_rejected_review_blocks",
+        "test_tampered_log_blocks",
+        "test_out_of_scope",
+        "test_native_hook_denies_unclaimed_write",
+        "test_native_hook_allows_scoped_claim",
+        "test_native_hook_terminal_not_autoapproved",
+        "test_native_hook_control_change_review",
+        "test_redaction_known_secret",
+        "test_review_stales_after_source_rerun",
+        "test_simultaneous_claim_one_winner",
+        "test_hook_shell_chain_requires_review",
+        "test_hook_outside_workspace_denied",
+        "test_governance_files_validate_frontmatter",
+        "test_dry_run_and_collision",
+        "test_discover_deep_and_reconstructed_spec",
+        "test_scaffold_contracts",
+        "test_package_handoff_structure",
+        "test_golden_record_and_assert_masking",
+        "test_auto_heal_cycles_and_rollback",
+        "test_integrate_and_release_gates",
+        "test_native_guard_handoff_isolation",
+        "test_auth",
+        "test_index_symbols_and_calculate_impact",
+        "test_package_handoff_includes_blast_radius",
+        "test_manage_worktree_lifecycle",
+        "test_audit_tests_mutation_detection",
+        "test_generate_charter_and_trace_matrix",
+        "test_interlock_semantic_gate",
+        "test_auth",
+        "test_naming_converters",
+        "test_scaffold_unit_generates_7_invariants",
+        "test_check_standards_complies_clean_code",
+        "test_check_standards_detects_violations",
+        "test_gate_rejects_standards_violations",
+        "test_validate_rejects_empty_standards_checklist",
+        "test_cadre_registry_loading",
+        "test_cadre_scaffold_page",
+        "test_cadre_check_templates_clean",
+        "test_cadre_check_templates_detects_violations",
+        "test_cadre_wire_template",
+        "test_cadre_scaffold_woocommerce_php",
+        "test_cadre_check_templates_php_sanitization",
+        "test_cadre_scaffold_direct_path_and_case_insensitivity",
+        "test_gate_rejects_template_violations",
+        "test_synapse_tables_and_wal",
+        "test_synapse_triple_lock_symbol_collision",
+        "test_synapse_triple_lock_route_collision",
+        "test_synapse_scaffold_module",
+        "test_synapse_decision_mesh_and_context_slicing",
+        "test_synapse_cross_worktrees_interlock",
+        "test_g4_standards_evidence_emission",
+        "test_1",
+        "test_g5_review_evidence_emission_and_gate_pass",
+        "test_prune_evidence_retention",
+        "test_data_dictionary_unsynchronized_detection",
+        "test_check_rules_no_candidates",
+        "test_check_rules_validation_and_rejection",
+        "test_approve_rule_promotes_and_creates_evidence",
+        "test_worktree_passthrough_mode",
+        "test_db_gov_state_path_env",
+        "test_file_stat_cache_sub_second_performance",
+        "test_package_handoff_includes_workspace_context",
+        "test_workspace_resolver_get_and_boundary",
+        "test_native_guard_rejects_boundary_escapes"
+      ]
+    },
+    {
+      "file": "tests/test_payment_processor.py",
+      "cases": [
+        "test_payment_processor_happy_path",
+        "test_payment_processor_validation_failure_empty_id",
+        "test_payment_processor_validation_failure_negative_amount"
+      ]
+    }
+  ],
+  "files": [
+    ".agents/.governance/hooks/native_guard.py",
+    ".agents/agents/builder-executor.md",
+    ".agents/agents/code-auditor.md",
+    ".agents/agents/genesis-architect.md",
+    ".agents/agents/project-orchestrator.md",
+    ".agents/agents/qa-verifier.md",
+    ".agents/agents/release-integrator.md",
+    ".agents/agents/spec-auditor.md",
+    ".agents/agents/spec-author.md",
+    ".agents/hooks/governance_guard.mjs",
+    ".agents/hooks/native_guard.py",
+    ".agents/hooks.json",
+    ".agents/rules/00-evidence-and-authority.md",
+    ".agents/rules/10-small-spec-and-changes.md",
+    ".agents/rules/20-task-isolation.md",
+    ".agents/rules/30-test-and-repair.md",
+    ".agents/rules/40-security-and-tools.md",
+    ".agents/rules/50-types-and-contracts.md",
+    ".agents/rules/60-release-and-learning.md",
+    ".agents/skills/cl-audit/SKILL.md",
+    ".agents/skills/cl-build/SKILL.md",
+    ".agents/skills/cl-characterize/SKILL.md",
+    ".agents/skills/cl-discover/SKILL.md",
+    ".agents/skills/cl-genesis/SKILL.md",
+    ".agents/skills/cl-impact/SKILL.md",
+    ".agents/skills/cl-inception/SKILL.md",
+    ".agents/skills/cl-learn/SKILL.md",
+    ".agents/skills/cl-page/SKILL.md",
+    ".agents/skills/cl-plan-slice/SKILL.md",
+    ".agents/skills/cl-release/SKILL.md",
+    ".agents/skills/cl-resume/SKILL.md",
+    ".agents/skills/cl-review/SKILL.md",
+    ".agents/skills/cl-spec-audit/SKILL.md",
+    ".agents/skills/cl-standards/SKILL.md",
+    ".agents/skills/cl-verify/SKILL.md",
+    ".agents/skills/init/scripts/detect_state.py",
+    ".agents/skills/init/SKILL.md",
+    ".agents/skills/init/template/.agents/agents/builder-executor.md",
+    ".agents/skills/init/template/.agents/agents/code-auditor.md",
+    ".agents/skills/init/template/.agents/agents/project-orchestrator.md",
+    ".agents/skills/init/template/.agents/agents/qa-verifier.md",
+    ".agents/skills/init/template/.agents/agents/release-integrator.md",
+    ".agents/skills/init/template/.agents/agents/spec-auditor.md",
+    ".agents/skills/init/template/.agents/agents/spec-author.md",
+    ".agents/skills/init/template/.agents/hooks.json",
+    ".agents/skills/init/template/.agents/rules/00-evidence-and-authority.md",
+    ".agents/skills/init/template/.agents/rules/10-small-spec-and-changes.md",
+    ".agents/skills/init/template/.agents/rules/20-task-isolation.md",
+    ".agents/skills/init/template/.agents/rules/30-test-and-repair.md",
+    ".agents/skills/init/template/.agents/rules/40-security-and-tools.md",
+    ".agents/skills/init/template/.agents/rules/50-types-and-contracts.md",
+    ".agents/skills/init/template/.agents/rules/60-release-and-learning.md",
+    ".agents/skills/init/template/.agents/skills/cl-build/SKILL.md",
+    ".agents/skills/init/template/.agents/skills/cl-discover/SKILL.md",
+    ".agents/skills/init/template/.agents/skills/cl-init/SKILL.md",
+    ".agents/skills/init/template/.agents/skills/cl-learn/SKILL.md",
+    ".agents/skills/init/template/.agents/skills/cl-plan-slice/SKILL.md",
+    ".agents/skills/init/template/.agents/skills/cl-release/SKILL.md",
+    ".agents/skills/init/template/.agents/skills/cl-resume/SKILL.md",
+    ".agents/skills/init/template/.agents/skills/cl-review/SKILL.md",
+    ".agents/skills/init/template/.agents/skills/cl-spec-audit/SKILL.md",
+    ".agents/skills/init/template/.agents/skills/cl-verify/SKILL.md",
+    ".agents/skills/init/template/.agents/skills/init/scripts/detect_state.py",
+    ".agents/skills/init/template/.agents/skills/init/SKILL.md",
+    ".agents/skills/init/template/.agents/templates/ADR.md",
+    ".agents/skills/init/template/.agents/templates/CODE_REVIEW.md",
+    ".agents/skills/init/template/.agents/templates/FINAL_REPORT.md",
+    ".agents/skills/init/template/.agents/templates/HANDOFF.md",
+    ".agents/skills/init/template/.agents/templates/INCIDENT.md",
+    ".agents/skills/init/template/.agents/templates/PLATFORM_COMPATIBILITY.md",
+    ".agents/skills/init/template/.agents/templates/SPEC_REVIEW.md",
+    ".agents/skills/init/template/.agents/templates/TASK_PACKET.md",
+    ".agents/skills/init/template/.governance/config.json",
+    ".agents/skills/init/template/.governance/hooks/native_guard.py",
+    ".agents/skills/init/template/.governance/tasks.json",
+    ".agents/skills/init/template/.specify/specs/01_CHARTER.md",
+    ".agents/skills/init/template/.specify/specs/02_ARCHITECTURE.md",
+    ".agents/skills/init/template/.specify/specs/03_ACCEPTANCE.md",
+    ".agents/skills/init/template/AGENTS.md",
+    ".agents/skills/init/template/tools/ci_checks.py",
+    ".agents/skills/init/template/tools/init_project.py",
+    ".agents/skills/init/template/tools/install.py",
+    ".agents/templates/ADR.md",
+    ".agents/templates/CODE_REVIEW.md",
+    ".agents/templates/FINAL_REPORT.md",
+    ".agents/templates/HANDOFF.md",
+    ".agents/templates/INCIDENT.md",
+    ".agents/templates/PLATFORM_COMPATIBILITY.md",
+    ".agents/templates/SPEC_REVIEW.md",
+    ".agents/templates/subagent_packet.xml",
+    ".agents/templates/TASK_PACKET.md",
+    ".github/workflows/governance-checks.yml",
+    ".gitignore",
+    ".governance/config.json",
+    ".governance/hooks/native_guard.py",
+    ".governance/inventory.json",
+    ".governance/registry/assets.json",
+    ".governance/registry/components.json",
+    ".governance/registry/taxonomy.json",
+    ".governance/standards.json",
+    ".governance/tasks.json",
+    ".governance/topology.json",
+    ".specify/specs/01_CHARTER.md",
+    ".specify/specs/02_ARCHITECTURE.md",
+    ".specify/specs/03_ACCEPTANCE.md",
+    "AGENTS.md",
+    "antigravity-init.ps1",
+    "contracts/billing_payment_processor.contract.ts",
+    "contracts/models.py",
+    "contracts/openapi.json",
+    "contracts/types.ts",
+    "docs/ARCHITECTURE_V4.md",
+    "docs/ARCHITECTURE_V5.md",
+    "docs/AUDIT_V2.md",
+    "docs/CLI.md",
+    "docs/decisions/ADR-0099.md",
+    "docs/INSTALL.md",
+    "docs/OPERATING_MODEL.md",
+    "docs/PROJECT_AGENTICPAYLOAD.md",
+    "docs/QUICKSTART_PL.md",
+    "docs/RAPORT_EWALUACJI_ANTIGRAVITY_V3.md",
+    "docs/RELEASE.md",
+    "docs/SECURITY.md",
+    "docs/SOURCES.md",
+    "docs/VALIDATION_SCOPE.md",
+    "docs/WDROZENIE_NOWY_KOMPUTER.md",
+    "examples/cli-settings.safe.json",
+    "examples/START_PROMPT_PL.md",
+    "install_to_antigravity.ps1",
+    "install_to_antigravity.py",
+    "MANIFEST.json",
+    "README.md",
+    "specs/01_PRODUCT_REQUIREMENTS.md",
+    "specs/02_SYSTEM_ARCHITECTURE.md",
+    "specs/03_DATA_DICTIONARY.md",
+    "specs/04_DEPENDENCY_AND_IMPACT.md",
+    "specs/05_TRACEABILITY_MATRIX.md",
+    "specs/blueprints/checkout.blueprint.json",
+    "specs/blueprints/page.blueprint.schema.json",
+    "specs/RECONSTRUCTED_SPEC.md",
+    "src/billing/billing_service.py",
+    "src/billing/payment_processor.py",
+    "src/pages/CheckoutPage.tsx",
+    "tests/test_billing_service.py",
+    "tests/test_genesis_v81.py",
+    "tests/test_governance.py",
+    "tests/test_payment_processor.py",
+    "TEST_RESULTS.json",
+    "tools/ci_checks.py",
+    "tools/genesis_compiler.py",
+    "tools/ingestion_parser.py",
+    "tools/init_project.py",
+    "tools/install.py",
+    "tools/workspace_resolver.py",
+    "VERSION"
+  ]
+}

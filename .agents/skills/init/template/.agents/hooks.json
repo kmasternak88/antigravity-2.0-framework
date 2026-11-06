@@ -1,0 +1,17 @@
+{
+  "closed-loop-write-guard": {
+    "enabled": true,
+    "PreToolUse": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 .governance/hooks/native_guard.py",
+            "timeout": 15
+          }
+        ]
+      }
+    ]
+  }
+}

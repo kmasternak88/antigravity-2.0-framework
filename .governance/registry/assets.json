@@ -1,0 +1,36 @@
+{
+  "version": 1,
+  "assets": {
+    "vendor.stripe-js": {
+      "type": "script",
+      "url": "https://js.stripe.com/v3/",
+      "loadStrategy": "async",
+      "integrity": "sha384-xyz-stripe-v3-integrity-hash",
+      "scope": "pages.checkout"
+    },
+    "styles.checkout-summary": {
+      "type": "style",
+      "filePath": "src/styles/components/order-summary.css",
+      "classNamespace": "cw-summary",
+      "scope": "ecommerce.checkout"
+    },
+    "styles.payment-form": {
+      "type": "style",
+      "filePath": "src/styles/components/payment-form.css",
+      "classNamespace": "cw-payment",
+      "scope": "billing.payment"
+    },
+    "styles.navbar": {
+      "type": "style",
+      "filePath": "src/styles/layout/navbar.css",
+      "classNamespace": "cw-nav",
+      "scope": "global"
+    },
+    "styles.footer": {
+      "type": "style",
+      "filePath": "src/styles/layout/footer.css",
+      "classNamespace": "cw-footer",
+      "scope": "global"
+    }
+  }
+}

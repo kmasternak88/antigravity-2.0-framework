@@ -1,0 +1,22 @@
+{
+  "timestamp": 1793740045.1100347,
+  "frameworks": [],
+  "languages": {
+    "Python": 23,
+    "TypeScript": 2
+  },
+  "totalFiles": 155,
+  "totalRoutes": 1,
+  "untestedRoutesCount": 1,
+  "totalModels": 143,
+  "totalTests": 97,
+  "fragilityScore": 50,
+  "fragilityRating": "MODERATE",
+  "untestedRoutes": [
+    {
+      "method": "ROUTE",
+      "path": ".agents/skills/init/scripts/detect_state.py",
+      "source": ".agents/skills/init/template/.agents/skills/init/SKILL.md"
+    }
+  ]
+}

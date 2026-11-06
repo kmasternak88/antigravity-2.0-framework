@@ -1,0 +1,28 @@
+name: governance-checks
+on:
+  pull_request:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Validate definitions
+        run: python3 .governance/bin/gov.py validate
+      - name: Test framework and configured candidate checks
+        run: python3 tools/ci_checks.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: governance-evidence
+          path: .governance/evidence/ci/
+          retention-days: 14

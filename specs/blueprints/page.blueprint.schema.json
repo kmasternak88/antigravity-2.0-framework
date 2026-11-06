@@ -1,0 +1,70 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Antigravity Page Blueprint Contract Schema v6.0",
+  "type": "object",
+  "required": ["pageId", "title", "targetFile", "adapter", "slots"],
+  "properties": {
+    "pageId": {
+      "type": "string",
+      "pattern": "^pages\\.[a-z0-9_-]+$",
+      "description": "Kanonik identyfikatora strony, np. pages.checkout"
+    },
+    "title": {
+      "type": "string",
+      "description": "Tytuł i cel biznesowy strony"
+    },
+    "targetFile": {
+      "type": "string",
+      "description": "Ścieżka do docelowego pliku szablonu"
+    },
+    "adapter": {
+      "type": "string",
+      "enum": ["react-typescript", "vue", "php-blade", "astro", "vanilla-html"],
+      "description": "Adapter docelowego środowiska szablonów"
+    },
+    "layout": {
+      "type": "string",
+      "description": "Identyfikator bazowego layoutu nadrzędnego"
+    },
+    "taxonomy": {
+      "type": "object",
+      "properties": {
+        "cssPrefix": { "type": "string" },
+        "viewModelType": { "type": "string" },
+        "stateStoreHook": { "type": "string" }
+      }
+    },
+    "slots": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["order", "components"],
+        "properties": {
+          "order": { "type": "integer" },
+          "components": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["component"],
+              "properties": {
+                "component": { "type": "string" },
+                "propBindings": { "type": "object" },
+                "condition": { "type": "string" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "requiredAssets": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Klucze zasobów z .governance/registry/assets.json"
+    },
+    "requiredImports": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Wymuszone linie importów generowane przez scaffolder"
+    }
+  }
+}

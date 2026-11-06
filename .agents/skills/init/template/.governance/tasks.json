@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "tasks": [
+    {
+      "id": "T001",
+      "title": "Zweryfikuj instalację frameworka; zastąp backlog przed pracą produktową",
+      "depends_on": [],
+      "allowed_paths": [
+        "tests"
+      ],
+      "checks": [
+        "framework-selftests"
+      ],
+      "acceptance": [
+        "AC-FW-001"
+      ],
+      "risk": "low"
+    }
+  ]
+}

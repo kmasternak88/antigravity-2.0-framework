@@ -1,0 +1,40 @@
+{
+  "version": 1,
+  "default_css_prefix": "cw-",
+  "layers": {
+    "components": {
+      "case": "PascalCase",
+      "regex": "^[A-Z][a-zA-Z0-9]+$",
+      "disallowed_prefixes": ["comp_", "Component", "c_"],
+      "description": "Komponenty wielokrotnego użytku muszą mieć nazwy w PascalCase"
+    },
+    "pages": {
+      "case": "PascalCase",
+      "suffix": "Page",
+      "regex": "^[A-Z][a-zA-Z0-9]+Page$",
+      "description": "Pliki stron i widoków nadrzędnych muszą mieć suffix Page w PascalCase (np. CheckoutPage)"
+    },
+    "state_hooks": {
+      "case": "camelCase",
+      "prefix": "use",
+      "regex": "^use[A-Z][a-zA-Z0-9]+$",
+      "description": "Hooki i funkcje logiki stanu muszą zaczynać się od 'use' w camelCase"
+    },
+    "types_and_dtos": {
+      "case": "PascalCase",
+      "allowed_suffixes": ["Req", "Res", "Props", "DTO", "State", "Context"],
+      "description": "Typy i DTO muszą być w PascalCase z semantycznym sufiksem"
+    },
+    "css_classes": {
+      "case": "kebab-case",
+      "required_prefix": "cw-",
+      "regex": "^cw-[a-z0-9]+(-[a-z0-9]+)*(__[a-z0-9]+(-[a-z0-9]+)*)?(--[a-z0-9]+(-[a-z0-9]+)*)?$",
+      "description": "Klasy CSS muszą przestrzegać BEM z prefiksem cw- (np. cw-checkout__summary--active)"
+    },
+    "api_endpoints": {
+      "case": "snake_case",
+      "regex": "^[a-z0-9]+(_[a-z0-9]+)*$",
+      "description": "Nazwy akcji i endpointów API w snake_case z domeną (np. billing_process_payment)"
+    }
+  }
+}

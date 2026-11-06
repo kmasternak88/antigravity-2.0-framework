@@ -1,0 +1,70 @@
+{
+  "version": 1,
+  "naming_standard": "PascalCase",
+  "components": {
+    "OrderSummary": {
+      "canonicalId": "ecommerce.checkout.order-summary",
+      "exportName": "OrderSummary",
+      "filePath": "src/components/checkout/OrderSummary.tsx",
+      "importStatement": "import { OrderSummary } from '@/components/checkout/OrderSummary';",
+      "phpImport": "require_once __DIR__ . '/components/checkout/order-summary.php';",
+      "requiredProps": {
+        "items": "Array<CartItem>",
+        "currency": "string",
+        "totalAmount": "number"
+      },
+      "optionalProps": {
+        "discountCode": "string"
+      },
+      "emitsEvents": ["onPromoApplied", "onItemRemoved"],
+      "associatedAssets": ["styles.checkout-summary"]
+    },
+    "PaymentForm": {
+      "canonicalId": "billing.payment.stripe-form",
+      "exportName": "PaymentForm",
+      "filePath": "src/components/billing/PaymentForm.tsx",
+      "importStatement": "import { PaymentForm } from '@/components/billing/PaymentForm';",
+      "phpImport": "require_once __DIR__ . '/components/billing/payment-form.php';",
+      "requiredProps": {
+        "clientSecret": "string",
+        "onSuccess": "(txId: string) => void"
+      },
+      "optionalProps": {
+        "allowSavedCards": "boolean"
+      },
+      "emitsEvents": ["onPaymentSuccess", "onPaymentError"],
+      "associatedAssets": ["vendor.stripe-js", "styles.payment-form"]
+    },
+    "Navbar": {
+      "canonicalId": "layout.navigation.main-nav",
+      "exportName": "Navbar",
+      "filePath": "src/components/layout/Navbar.tsx",
+      "importStatement": "import { Navbar } from '@/components/layout/Navbar';",
+      "phpImport": "require_once __DIR__ . '/components/layout/navbar.php';",
+      "requiredProps": {
+        "brandName": "string",
+        "menuItems": "Array<MenuItem>"
+      },
+      "optionalProps": {
+        "currentUser": "UserSession"
+      },
+      "emitsEvents": ["onNavigate", "onLogout"],
+      "associatedAssets": ["styles.navbar"]
+    },
+    "Footer": {
+      "canonicalId": "layout.navigation.footer",
+      "exportName": "Footer",
+      "filePath": "src/components/layout/Footer.tsx",
+      "importStatement": "import { Footer } from '@/components/layout/Footer';",
+      "phpImport": "require_once __DIR__ . '/components/layout/footer.php';",
+      "requiredProps": {
+        "copyrightYear": "number"
+      },
+      "optionalProps": {
+        "socialLinks": "Array<SocialLink>"
+      },
+      "emitsEvents": [],
+      "associatedAssets": ["styles.footer"]
+    }
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "name": "diag2",
+  "command": "C:\\Users\\lpiku\\AppData\\Local\\Programs\\Python\\Python312\\python.exe -c \"print('UUID: 11111111-2222-3333-4444-555555555555 Date: 2026-11-02T10:00:00Z Status: PASS')\"",
+  "exitCode": 0,
+  "outputDigest": "e438a543e79fa4f3147a9a77267294e6cf1d85a1669d419fee6ce119a8600ba8",
+  "maskedOutput": "UUID: [DYNAMIC_UUID] Date: [DYNAMIC_TIMESTAMP] Status: PASS",
+  "recordedAt": 1793641461.808494
+}

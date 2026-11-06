@@ -1,0 +1,52 @@
+{
+  "version": 1,
+  "active_profile": "standard",
+  "profiles": {
+    "tiny": {
+      "max_function_lines": 60,
+      "enforce_type_annotations": false,
+      "disallow_bare_exceptions": true,
+      "require_dual_tests": false
+    },
+    "standard": {
+      "max_function_lines": 40,
+      "enforce_type_annotations": true,
+      "disallow_bare_exceptions": true,
+      "require_dual_tests": true
+    },
+    "critical": {
+      "max_function_lines": 25,
+      "enforce_type_annotations": true,
+      "disallow_bare_exceptions": true,
+      "require_dual_tests": true,
+      "require_input_validation": true,
+      "zero_external_untyped": true
+    }
+  },
+  "max_function_lines": 40,
+  "enforce_type_annotations": true,
+  "disallow_bare_exceptions": true,
+  "required_invariants": [
+    "interface_contract",
+    "input_validation",
+    "domain_exception",
+    "pure_logic_srp",
+    "telemetry_logging",
+    "dual_test_suite",
+    "export_registration"
+  ],
+  "forbidden_patterns": [
+    "console.log",
+    "print(",
+    "TODO:",
+    "FIXME:",
+    "except Exception: pass",
+    "except:"
+  ],
+  "naming_conventions": {
+    "classes": "PascalCase",
+    "functions": "snake_case",
+    "test_files": "test_*.py",
+    "exception_suffix": "Error"
+  }
+}
