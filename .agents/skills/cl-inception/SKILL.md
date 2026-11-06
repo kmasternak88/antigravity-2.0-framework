@@ -9,7 +9,7 @@ version: 5.1.0
 Komenda `/cl-inception` przeprowadza agenta i człowieka przez rygorystyczny, 5-fazowy proces powstawania nowego projektu, eliminując halucynacje, niespójności i dług technologiczny przed napisaniem jakiegokolwiek kodu biznesowego.
 
 ```
-[Surowy Pomysł] 
+[Surowy Pomysł]
        ↓
 (1. Idea Inception & Stress-Testing) → [Odwracalne vs Nieodwracalne Decyzje]
        ↓

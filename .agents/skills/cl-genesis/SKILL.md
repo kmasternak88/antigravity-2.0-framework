@@ -8,6 +8,10 @@ version: 8.0.0
 
 Komenda `/cl-genesis` inicjuje wieloagentowy potok inżynieryjny, którego celem jest przekształcenie surowego pomysłu, briefu lub specyfikacji biznesowej w **KOMPLETNY, DETERMINISTYCZNY I ODPORNY NA AWARIE MASTER IMPLEMENTATION BLUEPRINT**. 
 
+Dostarcza on dwie zsynchronizowane warstwy (Two-Tier Synchronized SSoT):
+1. **Warstwa I: Specification-Driven Development Blueprint (SDB w `specs/`)** — PRD w EARS, architektura C4 i UI/UX (WCAG 2.1 AA / OKLCH), Słownik Danych i Traceability Matrix.
+2. **Warstwa II: LLM-Executable Blueprint (`.governance/tasks.json` + `contracts/`)** — Deterministyczny graf DAG spełniający regułę 40/3/1, 7 niezmienników DREE, zamrożone kontrakty bez float dla walut oraz komendy weryfikacyjne DoD (exit code 0).
+
 Plan ten stanowi fundament wykonawczy dla downstream coding agents (`builder-executor`, `code-auditor`, `qa-verifier`), gwarantując, że implementacja odbędzie się bez zgadywania założeń, bez dryfu architektonicznego i z zerową tolerancją na halucynacje.
 
 ---

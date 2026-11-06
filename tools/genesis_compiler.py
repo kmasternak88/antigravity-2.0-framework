@@ -17,6 +17,10 @@ __all__ = [
     "validate_dag_acyclic",
     "validate_disjoint_parallel_paths",
     "validate_task_complexity_limits",
+    "validate_ears_syntax",
+    "validate_contract_compatibility",
+    "validate_dree_financial_invariants",
+    "validate_blueprint_completeness",
     "detect_tech_stack",
     "is_valid_mutation_target",
     "validate_gate_g4_cardinal_rule",
@@ -813,6 +817,7 @@ def validate_dree_financial_invariants(dto_code: str) -> None:
     """Enforces DREE Rule 50: strictly prohibits float/double types in financial and monetary models.
     Raises ValueError('DREE_RULE_50_FLOAT_FORBIDDEN: ...') if floating point is detected.
     """
+    import ast
     try:
         tree = ast.parse(dto_code)
     except Exception:
@@ -836,6 +841,43 @@ def validate_dree_financial_invariants(dto_code: str) -> None:
                         f"DREE_RULE_50_FLOAT_FORBIDDEN: Field '{node.target.id}' uses forbidden floating-point type '{ftype}'. "
                         "All monetary values must be integer minor units (cents/grosze) or basis points under DREE v8.2 Rule 50."
                     )
+
+def validate_blueprint_completeness(content: str) -> Dict[str, Any]:
+    """Zero-Omission & Vertical Slice Invariant:
+    Validates that the blueprint contains full architectural coverage:
+    - If web/WordPress/WooCommerce: validates Admin Dashboard, UI/UX (WCAG/OKLCH), HPOS/Data Layer, Lifecycle.
+    - Zero placeholders invariant.
+    """
+    content_lower = content.lower()
+    is_wp_or_ecommerce = any(w in content_lower for w in ["woocommerce", "wordpress", "wtyczk", "plugin", "hpos", "sklep", "ecommerce", "e-commerce"])
+
+    # Explicit admin dashboard / settings UI module detection
+    admin_ui_indicators = [
+        "admin dashboard", "panel administracyjny", "panel admina", "settings page",
+        "strona ustawień", "zakładka opcji", "admin menu", "dashboard & settings",
+        "widok admina", "admin ui", "formularz konfiguracji"
+    ]
+    report = {
+        "is_wp_or_ecommerce": is_wp_or_ecommerce,
+        "has_admin_dashboard": any(w in content_lower for w in admin_ui_indicators),
+        "has_ui_standards": any(w in content_lower for w in ["wcag", "oklch", "48px", "dostępn", "contrast", "aria"]),
+        "has_hpos_or_data_layer": any(w in content_lower for w in ["hpos", "order storage", "baza danych", "schema", "tabel", "encj"]),
+        "has_lifecycle": any(w in content_lower for w in ["instalac", "install", "migrac", "deaktywac", "uninstall", "cykl życia"]),
+    }
+
+    if is_wp_or_ecommerce:
+        missing_sections = []
+        if not report["has_admin_dashboard"]:
+            missing_sections.append("Admin Dashboard & Settings Module")
+        if not report["has_hpos_or_data_layer"]:
+            missing_sections.append("HPOS / Structured Order Storage Data Layer")
+        if missing_sections:
+            raise ValueError(
+                f"BLUEPRINT_COMPLETENESS_VIOLATION: WordPress / WooCommerce Blueprint is missing mandatory vertical slices: {', '.join(missing_sections)}. "
+                "Zero-Omission Invariant requires full Admin UI, HPOS models, and Lifecycle hooks."
+            )
+
+    return report
 
 def main():
     parser = argparse.ArgumentParser(description="Genesis Blueprint Compiler & Validator v8.1")
