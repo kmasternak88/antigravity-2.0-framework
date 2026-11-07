@@ -203,7 +203,7 @@ def file_index(target_root: Optional[Path] = None) -> Dict[str, str]:
                     if name in EXCLUDES:
                         continue
                     if entry.is_dir(follow_symlinks=False):
-                        if (dir_path == r / '.governance') and name in {'state', 'evidence', 'golden', 'handoffs', 'snapshots'}:
+                        if (dir_path == r / '.governance') and name in {'state', 'evidence', 'golden', 'handoffs', 'snapshots', 'feedback'}:
                             continue
                         if dir_path == r and name == 'workspace' and active_ws_sub and active_ws_sub.startswith('workspace/'):
                             scan_dir(r / active_ws_sub)
@@ -215,7 +215,7 @@ def file_index(target_root: Optional[Path] = None) -> Dict[str, str]:
                             raise Rejected('Symlink unsupported: ' + str(rel))
                         if name.startswith('.env') and name != '.env.example':
                             continue
-                        if name.endswith(('.log', '.har')) or name in EXCLUDES_FILES:
+                        if name.endswith(('.log', '.har')) or name.startswith('FEEDBACK_PACKET_') or name in EXCLUDES_FILES:
                             continue
                         st = entry.stat(follow_symlinks=False)
                         p = Path(entry.path)
@@ -309,6 +309,27 @@ def db():
         payload_json TEXT NOT NULL,
         timestamp REAL NOT NULL,
         FOREIGN KEY (run_id) REFERENCES discovery_runs(run_id)
+    );
+    CREATE TABLE IF NOT EXISTS task_iterations (
+        task TEXT NOT NULL,
+        iteration INTEGER NOT NULL,
+        builder_actor TEXT,
+        supervisor_actor TEXT,
+        status TEXT NOT NULL,
+        findings_json TEXT,
+        at REAL NOT NULL,
+        PRIMARY KEY (task, iteration)
+    );
+    CREATE TABLE IF NOT EXISTS task_supervision_logs (
+        log_id TEXT PRIMARY KEY,
+        task TEXT NOT NULL,
+        iteration INTEGER NOT NULL,
+        supervisor_actor TEXT NOT NULL,
+        supervisor_session TEXT NOT NULL,
+        auditor_token TEXT,
+        verdict TEXT NOT NULL,
+        feedback_path TEXT,
+        at REAL NOT NULL
     );
     """)
     # Migration helper for reviews columns

@@ -1,6 +1,6 @@
-# AGENTS.md — Globalny Manifest Koordynacji i Niezmienników (Antigravity v7.0)
+# AGENTS.md — Globalny Manifest Koordynacji i Niezmienników (Antigravity v8.3)
 
-> **Zasada nadrzędna:** Niniejszy plik definiuje nienaruszalny kontrakt epistemologiczny, etyczny i operacyjny dla wszystkich agentów LLM pracujących w ekosystemie **Antigravity 2.0**. Każdy subagent przed podjęciem działania ma obowiązek zapoznać się z poniższymi regułami.
+> **Zasada nadrzędna:** Niniejszy plik definiuje nienaruszalny kontrakt epistemologiczny, etyczny i operacyjny dla wszystkich agentów LLM pracujących w ekosystemie **Antigravity 2.0 (Ultra Swarm Engine)**. Każdy subagent przed podjęciem działania ma obowiązek zapoznać się z poniższymi regułami.
 
 ---
 
@@ -17,7 +17,7 @@
 9. **Zakaz samocertyfikacji (Dual-Control):** Agent implementujący (`builder`) nie może odbierać ani recenzować własnego kodu jako niezależny audytor (`reviewer != actor`).
 10. **Świeżość dowodów (Zero Drift):** Status `PASS` wymaga wykonanego testu na BIEŻĄCYM stanie kodu (`sourceDigest == snapshot()`). Każda zmiana pliku natychmiast unieważnia wcześniejszy dowód testu.
 11. **Ochrona testów:** Zakaz usuwania testów failing, zakaz obniżania progów asercji, zakaz wprowadzania mocków do kodu produkcyjnego, zakaz modyfikacji expected bez formalnego zatwierdzenia specyfikacji.
-12. **Ścisły budżet napraw (3-Cycle Self-Healing):** Algorytm naprawy błędu testu: *Minimalna reprodukcja -> Hipoteza przyczynowa -> Punktowa zmiana -> Asercja*. Maksymalnie 3 próby; po nich natychmiastowa eskalacja do człowieka.
+12. **Ścisły budżet napraw (3-Cycle Self-Healing):** Algorytm naprawy błędu testu: *Minimalna reprodukcja -> Hipoteza przyczynowa -> Punktowa zmiana -> Asercja*. Maksymalnie 3 próby w pętli z `task-supervisor` w oparciu o `FEEDBACK_PACKET.json`; po 3 cyklach natychmiastowe zamrożenie `BLOCKED_ESCALATED` i eskalacja do człowieka/orchestratora.
 13. **Zatwierdzenia operacji krytycznych:** Produkcyjne operacje deploy, migracja bazy danych, kasowanie danych, publikacja paczek, operacje finansowe wymagają odrębnego, jawnego zatwierdzenia człowieka dla konkretnej komendy.
 14. **Ochrona tajemnic i PII:** Klucze API, sekrety i dane osobowe pod żadnym pozorem nie trafiają do promptów, commitów, logów ani artefaktów audytu. Logi podlegają automatycznemu redagowaniu (`redact()`).
 15. **Weryfikacja skryptów instalacyjnych:** Zakaz uruchamiania nieznanych skryptów instalacyjnych bez uprzedniego audytu kodu. Shell allowlist nie stanowi pełnego sandboxa bezpieczeństwa.
@@ -49,18 +49,26 @@ Każda jednostka funkcjonalna generowana lub modyfikowana w projekcie musi bezwz
 | **G3** | Triple Lock Claim | `python .governance/bin/gov.py claim` | Blokada ścieżek, dzierżawa symboli AST i tras routingu API |
 | **G4** | Standardy & Szablony | `python .governance/bin/gov.py check-standards` | 7 Niezmienników DREE, SRP $\le$ 40, komponenty CADRE, słownik danych |
 | **G5** | Weryfikacja Dowodowa | `python .governance/bin/gov.py run` & `audit-tests` | Exit code 0, dowód w `evidence/`, test mutacyjny Mock-Breaker |
-| **G5.2**| Niezależne Review | `python .governance/bin/gov.py review` | Zatwierdzenie przez niezależnego audytora (`reviewer != actor`) |
+| **G5.2**| Niezależne Review | `python .governance/bin/gov.py review` | Zatwierdzenie przez niezależnego audytora/supervisora (`reviewer != actor`) |
 | **G6** | Pre-Merge Interlock | `python .governance/bin/gov.py interlock --cross-worktrees` | Brak kolizji z gałęzią główną i aktywnymi worktrees |
 | **G7** | Wydanie Operacyjne | `python .governance/bin/gov.py release` | 100% zadań DONE, zerowa regresja, nienaruszalny `RELEASE_MANIFEST.json` |
 
 ---
 
-## 👥 MACIERZ RÓL SUBAGENTÓW
+## 👥 MACIERZ RÓL SUBAGENTÓW (TRÓJWARSTWOWA HIERARCHIA MULTI-SWARM)
 
-- **`project-orchestrator`:** Naczelny koordynator, planowanie DAG, przydział zadań, Triple Lock, zarządzanie worktree, interlock i release.
-- **`builder-executor`:** Realizacja zadania w izolowanym worktree, 7 niezmienników DREE, montaż szablonów CADRE, budżet 3 napraw.
-- **`code-auditor`:** Niezależna recenzja kodu G5.2, audyt mutacyjny Mock-Breaker, analiza wektorów błędów i luk bezpieczeństwa.
+### Warstwa 1: Orkiestracja Globalna
+- **`project-orchestrator`:** Naczelny koordynator, planowanie acyklicznego DAG, podział na bezkolizyjne fale (Execution Waves), alokacja zasobów Triple Lock, nadzór nad pulą równoległych tandemów (concurrency limit: default 2, max 3), interlock i release.
+
+### Warstwa 2: Lokalny Nadzór Zadań i Audyt
+- **`task-supervisor`:** Dedykowany nadzorca pojedynczego zadania w odizolowanym worktree `.worktrees/<task_id>`. Prowadzi pętlę naprawczą z builderem (max 3 cykle), generuje artefakt `FEEDBACK_PACKET.json`, weryfikuje DREE i Mock-Breaker oraz certyfikuje bramkę G5.2.
+- **`code-auditor`:** Niezależna globalna recenzja kodu G5.2, audyt mutacyjny Mock-Breaker, analiza wektorów błędów i luk bezpieczeństwa.
 - **`qa-verifier` / `qa-sentinel`:** Weryfikacja integralności SQLite, asercje regresyjne CI, testy end-to-end.
+
+### Warstwa 3: Implementacja w Pętli (Self-Healing)
+- **`builder-executor`:** Realizacja zadania w izolowanym worktree, 7 niezmienników DREE, montaż szablonów CADRE, konsumpcja wytycznych z `FEEDBACK_PACKET.json`, budżet 3 napraw. Brak uprawnień do samocertyfikacji.
+
+### Role Dodatkowe i Architektoniczne
 - **`spec-author`:** Redagowanie PRD, User Stories Gherkin, modelowanie C4, słownik danych `specs/03_DATA_DICTIONARY.md`.
 - **`spec-auditor`:** Niezależny audyt specyfikacji, weryfikacja mierzalności kryteriów i checklist DREE przed bramką G2.
 - **`release-integrator`:** Scalanie worktrees, Pre-Merge Cross-Interlock, generowanie Macierzy Śledzenia SSoT i certyfikacja G7.
