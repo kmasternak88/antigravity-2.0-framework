@@ -1,0 +1,22 @@
+{
+  "archetype": "microservices_gateway",
+  "category": "distributed_systems",
+  "leading_competitors": [
+    {
+      "name": "Kong Gateway",
+      "architecture": "OpenResty/Nginx Lua plugin architecture",
+      "strengths": ["Wysoka przepustowość", "Bogaty ekosystem pluginów"],
+      "weaknesses": ["Złożoność konfiguracji declarative vs DB", "Trudniejszy debugging w Lua"]
+    },
+    {
+      "name": "Traefik",
+      "architecture": "Go-based reverse proxy with dynamic provider configuration",
+      "strengths": ["Automatyczne wykrywanie usług Docker/K8s", "Lekka architektura"],
+      "weaknesses": ["Wyższe zużycie CPU przy gwałtownych skokach ruchu", "Ograniczone zaawansowane transformacje payloadu"]
+    }
+  ],
+  "architectural_recommendations": {
+    "persistence": "Stateless config z synchronizacją Redis/etcd",
+    "resilience": "Token Bucket Rate Limiter, Circuit Breaker z Half-Open probing i OpenTelemetry tracing."
+  }
+}

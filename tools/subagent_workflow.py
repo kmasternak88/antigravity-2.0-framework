@@ -130,6 +130,24 @@ class MultiSubagentOrchestrator:
                 role_type="verifier",
                 skills=["cl-verify", "cl-characterize"],
                 allowed_tools=["gov.py trace-matrix", "gov.py gate"]
+            ),
+            "market_scout": SubagentRole(
+                name="market-scout-analyst",
+                role_type="analyst",
+                skills=["cl-market-discovery", "cl-discover"],
+                allowed_tools=["web_search", "fetch_repo", "read_file"]
+            ),
+            "reverse_architect": SubagentRole(
+                name="reverse-systems-architect",
+                role_type="architect",
+                skills=["cl-market-discovery", "cl-standards"],
+                allowed_tools=["gov.py check-standards", "read_file"]
+            ),
+            "interview_orchestrator": SubagentRole(
+                name="discovery-interview-orchestrator",
+                role_type="orchestrator",
+                skills=["cl-market-discovery", "grill-me"],
+                allowed_tools=["ask_question", "gov.py approve-spec"]
             )
         }
 

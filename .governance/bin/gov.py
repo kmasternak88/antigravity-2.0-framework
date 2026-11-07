@@ -288,6 +288,28 @@ def db():
     CREATE TABLE IF NOT EXISTS symbol_leases (symbol TEXT PRIMARY KEY, task TEXT, actor TEXT, session TEXT, expires REAL, created_at REAL);
     CREATE TABLE IF NOT EXISTS decision_mesh (adr_id TEXT PRIMARY KEY, domain TEXT, assertion TEXT, scope TEXT, active INTEGER, created_at REAL);
     CREATE TABLE IF NOT EXISTS contract_manifests (contract_id TEXT PRIMARY KEY, spec_hash TEXT, file_path TEXT, mock_url TEXT, created_at REAL);
+    CREATE TABLE IF NOT EXISTS discovery_runs (
+        run_id TEXT PRIMARY KEY,
+        project_slug TEXT NOT NULL,
+        archetype TEXT NOT NULL,
+        target_stack TEXT NOT NULL,
+        status TEXT NOT NULL,
+        ims_score REAL NOT NULL,
+        grill_me_bypassed INTEGER NOT NULL,
+        blueprint_hash TEXT,
+        created_at REAL NOT NULL,
+        updated_at REAL NOT NULL
+    );
+    CREATE TABLE IF NOT EXISTS discovery_checkpoints (
+        checkpoint_id TEXT PRIMARY KEY,
+        run_id TEXT NOT NULL,
+        phase_name TEXT NOT NULL,
+        actor TEXT NOT NULL,
+        evidence_path TEXT,
+        payload_json TEXT NOT NULL,
+        timestamp REAL NOT NULL,
+        FOREIGN KEY (run_id) REFERENCES discovery_runs(run_id)
+    );
     """)
     # Migration helper for reviews columns
     try:

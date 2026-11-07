@@ -1,0 +1,93 @@
+{
+  "archetype": "wordpress_woocommerce_seo",
+  "category": "cms_ecommerce_plugin",
+  "leading_competitors": [
+    {
+      "name": "Yoast SEO",
+      "market_share_tier": "Dominant Enterprise",
+      "architecture": {
+        "persistence": "Hybrid wp_options, postmeta and custom yoast_indexable tables",
+        "autoload_burden_kb": 120,
+        "queries_per_request": 35,
+        "indexing_engine": "Dynamic schema generator with post-save hooks",
+        "async_queue": "WP-Cron based queue"
+      },
+      "strengths": [
+        "Standard de-facto w ekosystemie WordPress",
+        "Kompleksowy graf Schema.org"
+      ],
+      "weaknesses": [
+        "Ogromny narzut na bazę wp_options (autoload bloat > 100KB)",
+        "Spowolnienie panelu wp-admin przez nachalny marketing i powiadomienia",
+        "Brak czystej izolacji w architekturze headless"
+      ]
+    },
+    {
+      "name": "Rank Math SEO",
+      "market_share_tier": "Rapid Growth Leader",
+      "architecture": {
+        "persistence": "Custom tables (rank_math_404_logs, rank_math_redirections) + postmeta",
+        "autoload_burden_kb": 85,
+        "queries_per_request": 28,
+        "indexing_engine": "Modular AST block parser with AJAX recalculation",
+        "async_queue": "Action Scheduler integration"
+      },
+      "strengths": [
+        "Nowoczesny modularny interfejs",
+        "Wbudowana obsługa schematów WooCommerce i rich snippets"
+      ],
+      "weaknesses": [
+        "Nadmierne zużycie pamięci przy włączonych wszystkich modułach",
+        "Zależność od Action Scheduler generująca tysiące wpisów w bazie",
+        "Telemetria i zewnętrzne wywołania API spowalniające proces zapisu posta"
+      ]
+    },
+    {
+      "name": "SEOPress",
+      "market_share_tier": "Lightweight Competitor",
+      "architecture": {
+        "persistence": "Standard postmeta + options, no custom tables by default",
+        "autoload_burden_kb": 45,
+        "queries_per_request": 18,
+        "indexing_engine": "Lightweight metadata scanner",
+        "async_queue": "Synchronous with background batch hooks"
+      },
+      "strengths": [
+        "Brak reklam w panelu admina (White label)",
+        "Mniejszy narzut pamięciowy w porównaniu do Yoast"
+      ],
+      "weaknesses": [
+        "Brak dedykowanych indeksów wydajnościowych dla sklepów > 50k produktów",
+        "Mniej rozbudowane asynchroniczne kolejkowanie analizy treści",
+        "Ograniczona integracja z architekturami WooCommerce High-Performance Order Storage (HPOS)"
+      ]
+    },
+    {
+      "name": "All in One SEO (AIOSEO)",
+      "market_share_tier": "Legacy Enterprise",
+      "architecture": {
+        "persistence": "Custom tables (aioseo_posts, aioseo_terms) + postmeta",
+        "autoload_burden_kb": 140,
+        "queries_per_request": 42,
+        "indexing_engine": "Complex Vue-based backend bridge",
+        "async_queue": "Action Scheduler & custom background tasks"
+      },
+      "strengths": [
+        "Długa historia na rynku",
+        "Gotowe kreatory konfiguracji dla początkujących"
+      ],
+      "weaknesses": [
+        "Bardzo ciężki bundle JS w panelu administracyjnym",
+        "Częste konflikty hooków z wtyczkami WooCommerce",
+        "Duży narzut zapytań SQL przy dynamicznym renderowaniu stron archiwum"
+      ]
+    }
+  ],
+  "architectural_recommendations": {
+    "persistence": "Dedykowana tabela `ag_seo_index` z unikalnymi kluczami hash i indeksem na `(object_type, object_id)`. ZERO wpisów w autoload > 2KB.",
+    "hpos_compatibility": "Wsparcie dla WooCommerce HPOS (High-Performance Order Storage) bez odpytywania przestarzałej tabeli `wp_posts` dla zamówień.",
+    "ast_engine": "Bezinwazyjny parser AST generujący graf JSON-LD w czasie zapisu (Write-Time Compilation) z cachem obiektowym (Redis/WP Object Cache) z czasem odczytu < 2ms.",
+    "async_processing": "Kolejkowanie asynchroniczne za pomocą izolowanego brokera z limitem pamięci 16MB.",
+    "rest_graphql_first": "Czyste punkty końcowe REST/GraphQL zoptymalizowane pod architektury headless i tradycyjny WP."
+  }
+}

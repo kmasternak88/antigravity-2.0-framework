@@ -1,0 +1,17 @@
+{
+  "archetype": "fintech_payment_ledger",
+  "category": "financial_systems",
+  "leading_competitors": [
+    {
+      "name": "Stripe Infrastructure",
+      "architecture": "Double-entry immutable ledger with distributed locking",
+      "strengths": ["Zero-loss guarantee", "Globalna idempotencja zapytań"],
+      "weaknesses": ["Wysokie koszty prowizyjne", "Proprietarny stack"]
+    }
+  ],
+  "architectural_recommendations": {
+    "persistence": "PostgreSQL z rygorystycznym poziomem izolacji SERIALIZABLE",
+    "money_rule": "Reguła 50 DREE: Wszystkie kwoty wyłącznie w integer minor units (grosze/centy), zero float.",
+    "idempotency": "Nagłówek X-Idempotency-Key z czasem TTL w Redis/DB."
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "archetype": "saas_multitenant",
+  "category": "cloud_applications",
+  "leading_competitors": [
+    {
+      "name": "Auth0 / Supabase SaaS Core",
+      "architecture": "Tenant isolation via Row-Level Security (RLS) or separate database schemas",
+      "strengths": ["Hermetyczna izolacja najemców", "JWT RBAC"],
+      "weaknesses": ["Narzut migracji schematów", "Złożone zapytania analityczne cross-tenant"]
+    }
+  ],
+  "architectural_recommendations": {
+    "persistence": "Baza relacyjna z RLS lub kolumną tenant_id i unikalnym indeksem złożonym (tenant_id, id).",
+    "security": "Asymetryczna weryfikacja tokenów RS256, rotacja kluczy i rygorystyczny RBAC."
+  }
+}

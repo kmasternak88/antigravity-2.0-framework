@@ -35,13 +35,17 @@ for _p in [_this_dir, _parent_dir]:
 try:
     from tools.ingestion_parser import IngestionParser
     from tools.genesis_compiler import compile_blueprint
+    from tools.discovery_engine import DiscoveryEngine, DiscoveryResult
 except ImportError:
     try:
         from ingestion_parser import IngestionParser
         from genesis_compiler import compile_blueprint
+        from discovery_engine import DiscoveryEngine, DiscoveryResult
     except ImportError:
         IngestionParser = None
         compile_blueprint = None
+        DiscoveryEngine = None
+        DiscoveryResult = None
 
 __all__ = [
     "detect_project_type",
@@ -93,7 +97,7 @@ def clean_slate_purge_sample_files(target: Path) -> List[Path]:
                 shutil.rmtree(p)
                 purged.append(p)
             except Exception: pass
-            
+
     for folder in [target / "src", target / "specs", target / "tests", target / "contracts"]:
         if folder.is_dir():
             for f in list(folder.rglob("*")):
@@ -205,7 +209,46 @@ def generate_clean_contracts_and_specs(target: Path, entities: List[str], archet
     }
     (contracts_dir / "openapi.json").write_text(json.dumps(openapi_doc, indent=2), encoding="utf-8")
 
-    # 4. specs/03_DATA_DICTIONARY.md
+    # 4. PHP Contracts for WordPress / WooCommerce or PHP stack
+    effective_check = f"{ptype} {archetype} {project_slug}".lower()
+    if any(k in effective_check for k in ["php", "wordpress", "woocommerce", "woo", "seo"]):
+        php_lines = [
+            "<?php",
+            "declare(strict_types=1);",
+            "",
+            "namespace Antigravity\\Contracts;",
+            "",
+            "/**",
+            " * Frozen Domain Interface Contracts (DREE v8.1 / PHP 8.2+ Strict)",
+            " */",
+            "interface DomainErrorInterface {}",
+            "",
+            "class DomainException extends \\RuntimeException implements DomainErrorInterface {}",
+            ""
+        ]
+        for ent in entities:
+            php_lines.extend([
+                f"interface {ent}RepositoryInterface {{",
+                f"    public function findById(string $id): ?{ent}Record;",
+                f"    public function save({ent}Record $record): void;",
+                "}",
+                "",
+                f"readonly class {ent}Record {{",
+                "    public function __construct(",
+                "        public string $id,",
+                "        public string $createdAt,",
+                "        public string $updatedAt",
+                "    ) {",
+                "        if (empty($this->id)) {",
+                f'            throw new DomainException("{ent} ID cannot be empty");',
+                "        }",
+                "    }",
+                "}",
+                ""
+            ])
+        (contracts_dir / "PluginContracts.php").write_text("\n".join(php_lines), encoding="utf-8")
+
+    # 5. specs/03_DATA_DICTIONARY.md
     if IngestionParser:
         dd_content = IngestionParser.generate_data_dictionary_content(entities, archetype)
         (specs_dir / "03_DATA_DICTIONARY.md").write_text(dd_content, encoding="utf-8")
@@ -388,7 +431,7 @@ def get_default_check(target: Path, ptype: str):
 
 
 
-def bootstrap(target_dir: str, mode: str = 'auto', force_merge: bool = False, dry_run: bool = False, prd: str = None, brief: str = None, auto_genesis: bool = False):
+def bootstrap(target_dir: str, mode: str = 'auto', force_merge: bool = False, dry_run: bool = False, prd: str = None, brief: str = None, auto_genesis: bool = False, deep_discovery: bool = False, non_interactive: bool = True, decisions: Optional[str] = None):
 
 
 
@@ -440,7 +483,7 @@ def bootstrap(target_dir: str, mode: str = 'auto', force_merge: bool = False, dr
 
 
 
-    
+
 
 
 
@@ -448,14 +491,14 @@ def bootstrap(target_dir: str, mode: str = 'auto', force_merge: bool = False, dr
     effective_mode = mode
     if effective_mode == 'auto':
         effective_mode = 'extend' if ptype != 'empty' else 'new'
-        
+
     is_ecommerce = is_ecommerce_input(brief, prd)
     project_slug = slugify(target.name or 'project')
     check_info = get_default_check(target, ptype)
-    
+
     plan = []
     actions = []
-    
+
     # 1. Directories to copy recursively
     dirs_to_copy = [
         '.governance/bin',
@@ -470,7 +513,7 @@ def bootstrap(target_dir: str, mode: str = 'auto', force_merge: bool = False, dr
         'contracts',
         'tools'
     ]
-    
+
     for rel in dirs_to_copy:
         src = FRAMEWORK_ROOT / rel
         dst = target / rel
@@ -485,7 +528,7 @@ def bootstrap(target_dir: str, mode: str = 'auto', force_merge: bool = False, dr
 
 
 
-                    
+
 
 
 
@@ -509,7 +552,7 @@ def bootstrap(target_dir: str, mode: str = 'auto', force_merge: bool = False, dr
 
 
 
-    
+
 
 
 
@@ -589,7 +632,7 @@ __pycache__/
 
 
 
-    
+
 
 
 
@@ -614,7 +657,7 @@ __pycache__/
 
 
 
-        
+
 
 
 
@@ -638,7 +681,7 @@ __pycache__/
 
 
 
-    
+
 
 
 
@@ -722,7 +765,7 @@ __pycache__/
 
 
 
-    
+
 
 
 
@@ -770,7 +813,7 @@ __pycache__/
 
 
 
-    
+
 
 
 
@@ -1150,7 +1193,59 @@ __pycache__/
     if not is_ecommerce and not dry_run:
         clean_slate_purge_sample_files(target)
 
-    # 7. Ingestion & Genesis Blueprint Compilation
+    # 7. Autonomous Discovery & Inception Engine (v8.2+)
+    discovery_res = None
+    if deep_discovery and not dry_run and DiscoveryEngine:
+        try:
+            parsed_decisions = None
+            if decisions:
+                if Path(decisions).is_file():
+                    parsed_decisions = json.loads(Path(decisions).read_text(encoding="utf-8"))
+                    if "decisions" in parsed_decisions:
+                        parsed_decisions = parsed_decisions["decisions"]
+                else:
+                    try:
+                        parsed_decisions = json.loads(decisions)
+                    except Exception:
+                        pass
+
+            disc_engine = DiscoveryEngine(workspace_root=target, knowledge_base_root=FRAMEWORK_ROOT / ".agents" / "knowledge_base")
+            disc_raw_input = brief or prd or target.name
+
+            # Check invariant vectors if ingestion parser available
+            ims = 0.5
+            bypassed = False
+            if IngestionParser:
+                try:
+                    ictx = IngestionParser.parse_input(disc_raw_input, target)
+                    ims = ictx.ims_score
+                    bypassed = not getattr(ictx, "grill_me_required", True)
+                except Exception:
+                    pass
+
+            d_result = disc_engine.run_deep_discovery(
+                project_slug=project_slug,
+                brief=disc_raw_input,
+                target_stack="php_wordpress" if ("wordpress" in project_slug or "woo" in project_slug or "seo" in disc_raw_input.lower()) else ptype,
+                non_interactive=non_interactive,
+                decisions_override=parsed_decisions,
+                ims_score=ims,
+                grill_me_bypassed=bypassed
+            )
+            discovery_res = {
+                "status": d_result.status,
+                "run_id": d_result.run_id,
+                "archetype": d_result.archetype,
+                "competitors_analyzed": d_result.competitors_analyzed,
+                "competitive_matrix": str(Path(d_result.competitive_matrix_path).relative_to(target) if target in Path(d_result.competitive_matrix_path).parents else d_result.competitive_matrix_path),
+                "blueprint_path": str(Path(d_result.blueprint_path).relative_to(target) if target in Path(d_result.blueprint_path).parents else d_result.blueprint_path),
+                "blueprint_hash": d_result.blueprint_hash,
+                "grill_me_bypassed": d_result.grill_me_bypassed
+            }
+        except Exception as e:
+            discovery_res = {"status": "DISCOVERY_ERROR", "error": str(e)}
+
+    # 8. Ingestion & Genesis Blueprint Compilation
     genesis_res = None
     ingestion_ctx = None
     target_prd = prd
@@ -1166,9 +1261,10 @@ __pycache__/
         try:
             raw_input = target_prd or brief
             ingestion_ctx = IngestionParser.parse_input(raw_input, target)
-            
+
             # Generate clean domain contracts and data dictionary
-            generate_clean_contracts_and_specs(target, ingestion_ctx.entities, ingestion_ctx.archetype, project_slug, ptype)
+            combined_archetype = f"{ingestion_ctx.archetype} {'wordpress_woocommerce_seo' if any(k in raw_input.lower() for k in ['wordpress', 'woocommerce', 'wp', 'woo', 'seo']) else ''}"
+            generate_clean_contracts_and_specs(target, ingestion_ctx.entities, combined_archetype, project_slug, ptype)
 
             blueprint_file = target / "specs" / "00_MASTER_BLUEPRINT.md"
             if target_prd and Path(target_prd).is_file():
@@ -1179,7 +1275,7 @@ __pycache__/
                 adr_lines = "\n".join([f"### {a['id']}: {a['title']}\n- **Decyzja**: {a['decision']}\n- **Uzasadnienie**: {a['rationale']}" for a in ingestion_ctx.autonomous_adrs])
                 entities_str = ", ".join(ingestion_ctx.entities) if ingestion_ctx.entities else "BaseEntity, DomainModel"
                 actors_str = ", ".join(ingestion_ctx.actors) if ingestion_ctx.actors else "Administrator, StandardUser"
-                
+
                 if ingestion_ctx.archetype in ("fintech_transaction_ledger", "multi_tenant_saas") or is_ecommerce:
                     req_003 = "- REQ-003: System MUST NOT używać liczb zmiennoprzecinkowych dla kwot pieniężnych (Zero-Float Policy)."
                 elif ingestion_ctx.archetype == "cli_system_tool":
@@ -1303,7 +1399,7 @@ Archetyp: {ingestion_ctx.archetype} | IMS Score: {ingestion_ctx.ims_score} ({ing
 
                 blueprint_file.write_text(draft_bp, encoding="utf-8")
 
-            
+
 
             genesis_res = compile_blueprint(blueprint_file, target)
 
@@ -1328,6 +1424,8 @@ Archetyp: {ingestion_ctx.archetype} | IMS Score: {ingestion_ctx.ims_score} ({ing
         "git_initialized": git_initialized,
 
         "doctor": doctor_res,
+
+        "discovery": discovery_res,
 
         "ingestion": {
 
@@ -1368,9 +1466,23 @@ def main():
     parser.add_argument('--prd', help='Sciezka do pliku PRD / specyfikacji markdown')
     parser.add_argument('--brief', help='Krotki opis lub brief pomyslu w linii komend')
     parser.add_argument('--auto-genesis', action='store_true', help='Automatyczna dekompozycja Genesis Compiler i generowanie specs/')
+    parser.add_argument('--deep-discovery', action='store_true', help='Uruchomienie fazy Autonomous Deep Discovery i dekonstrukcji rynku')
+    parser.add_argument('--non-interactive', action='store_true', default=True, help='Tryb nieinteraktywny wywiadu decyzyjnego HITL')
+    parser.add_argument('--decisions', help='Sciezka do pliku z decyzjami architektonicznymi lub inline JSON')
     args = parser.parse_args()
 
-    result = bootstrap(args.target, mode=args.mode, force_merge=args.force_merge, dry_run=args.dry_run, prd=args.prd, brief=args.brief, auto_genesis=args.auto_genesis)
+    result = bootstrap(
+        args.target,
+        mode=args.mode,
+        force_merge=args.force_merge,
+        dry_run=args.dry_run,
+        prd=args.prd,
+        brief=args.brief,
+        auto_genesis=args.auto_genesis,
+        deep_discovery=args.deep_discovery,
+        non_interactive=args.non_interactive,
+        decisions=args.decisions
+    )
     print(json.dumps(result, indent=2, ensure_ascii=False))
 
 
@@ -1379,6 +1491,3 @@ if __name__ == '__main__':
 
 
     main()
-
-
-
