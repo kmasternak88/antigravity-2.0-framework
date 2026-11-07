@@ -142,6 +142,7 @@ class MultiSubagentOrchestrator:
         builder_session: Optional[str] = None,
         auditor_session: Optional[str] = None,
         auditor_token: Optional[str] = None,
+        check_name: Optional[str] = None,
         auto_interlock_and_finish: bool = True
     ) -> SubagentWorkflowResult:
         """Executes full dual-control lifecycle for task_id:
@@ -176,7 +177,23 @@ class MultiSubagentOrchestrator:
         fencing_token = claim_res.get("token") or claim_res.get("fencingToken")
 
         # Step 3: Builder runs tests to generate evidence
-        run_res = self._run_gov(["run", "--task", task_id, "--check", "unit"], env=claim_env)
+        target_check = check_name
+        if not target_check:
+            tasks_file = self.workspace_root / ".governance" / "tasks.json"
+            if tasks_file.is_file():
+                try:
+                    with open(tasks_file, "r", encoding="utf-8") as f:
+                        tdata = json.load(f)
+                    for t in tdata.get("tasks", []):
+                        if t.get("id") == task_id and t.get("checks"):
+                            target_check = t["checks"][0]
+                            break
+                except Exception:
+                    pass
+        if not target_check:
+            target_check = "unit"
+
+        run_res = self._run_gov(["run", "--task", task_id, "--check", target_check], env=claim_env)
         evidence_path = run_res.get("evidencePath") or run_res.get("log")
 
         # Invariant test: builder attempting self-review MUST be blocked

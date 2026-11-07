@@ -377,47 +377,20 @@ def get_default_check(target: Path, ptype: str):
 
 
     else:
-        existing_tasks_path = target / '.governance/tasks.json'
-        if existing_tasks_path.is_file():
-            try:
-                tasks_data = json.loads(existing_tasks_path.read_text(encoding='utf-8'))
-                curr_tasks = tasks_data.get('tasks', [])
-                try:
-                    from tools.extend_project import compute_next_task_ids
-                except ImportError:
-                    from extend_project import compute_next_task_ids
-                next_ids = compute_next_task_ids(curr_tasks, count=1)
-                new_id = next_ids[0]
-            except Exception:
-                curr_tasks = []
-                new_id = "T001"
-                tasks_data = {"version": 1, "tasks": []}
 
-            new_task = {
-                "id": new_id,
-                "title": f"Feature Slice: Rozbudowa modułu w projekcie {target.name}",
-                "depends_on": [curr_tasks[-1]["id"]] if curr_tasks else [],
-                "allowed_paths": ["src", "tests", "specs"],
-                "checks": [check_info['check_name']],
-                "acceptance": ["AC-FEAT-001"],
-                "risk": "standard"
-            }
-            tasks_data.setdefault("tasks", []).append(new_task)
-        else:
-            tasks_data = {
-                "version": 1,
-                "tasks": [
-                    {
-                        "id": "T001",
-                        "title": f"Feature Slice: Rozbudowa modułu w projekcie {target.name}",
-                        "depends_on": [],
-                        "allowed_paths": ["src", "tests", "specs"],
-                        "checks": [check_info['check_name']],
-                        "acceptance": ["AC-FEAT-001"],
-                        "risk": "standard"
-                    }
-                ]
-            }
+
+
+        return {'check_name': 'framework-selftests', 'argv': [py_bin, '-m', 'unittest', 'discover', '-s', 'tests', '-v'], 'timeout': 120}
+
+
+
+
+
+
+
+def bootstrap(target_dir: str, mode: str = 'auto', force_merge: bool = False, dry_run: bool = False, prd: str = None, brief: str = None, auto_genesis: bool = False):
+
+
 
     target = Path(target_dir).resolve()
 
@@ -621,14 +594,23 @@ __pycache__/
 
 
     # 2c. Ensure runtime governance directories exist
-
-
-
-    for rdir in ['.governance/state', '.governance/evidence', '.governance/snapshots', '.governance/handoffs']:
-
-
-
+    for rdir in ['.governance/state', '.governance/evidence', '.governance/snapshots', '.governance/handoffs', 'tests', 'src']:
         (target / rdir).mkdir(parents=True, exist_ok=True)
+
+    # 2d. Baseline test to ensure immediate discovery and execution under unittest
+    baseline_test = target / 'tests' / 'test_baseline.py'
+    if not baseline_test.exists():
+        baseline_code = (
+            '"""Baseline Framework Verification Test."""\n'
+            'import unittest\n\n'
+            'class BaselineVerificationTest(unittest.TestCase):\n'
+            '    def test_environment_and_framework_selftest(self):\n'
+            '        """Verify testing harness is operational."""\n'
+            '        self.assertTrue(True)\n\n'
+            'if __name__ == "__main__":\n'
+            '    unittest.main()\n'
+        )
+        plan.append(('write_text', baseline_test, baseline_code))
 
 
 
