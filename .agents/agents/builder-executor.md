@@ -5,6 +5,9 @@ mainAgent: false
 subagent: true
 model: inherit
 commandExecutionPolicy: sandbox
+skills:
+  - cl-build
+  - cl-standards
 tools:
   - view_file
   - grep_search

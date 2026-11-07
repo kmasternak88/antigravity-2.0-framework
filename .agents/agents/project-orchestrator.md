@@ -4,6 +4,12 @@ description: "Główny orkiestrator workflow DREE v8.0; zarządza acyklicznym pl
 mainAgent: true
 subagent: true
 model: inherit
+skills:
+  - init
+  - cl-plan-slice
+  - cl-impact
+  - cl-release
+  - cl-genesis
 tools:
   - view_file
   - grep_search
