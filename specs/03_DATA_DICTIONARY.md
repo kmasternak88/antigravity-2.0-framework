@@ -11,20 +11,27 @@
 | `DiscoveryEngine` | `class` | `tools/discovery_engine.py` |
 | `DiscoveryEngineError` | `class` | `tools/discovery_engine.py` |
 | `DiscoveryResult` | `class` | `tools/discovery_engine.py` |
+| `DualControlViolationError` | `class` | `tools/subagent_workflow.py` |
 | `EntityBase` | `class` | `contracts/models.py` |
+| `FeedbackFinding` | `class` | `tools/subagent_workflow.py` |
+| `FeedbackPacket` | `class` | `tools/subagent_workflow.py` |
 | `GovernanceTests` | `class` | `tests/test_governance.py` |
 | `IPaymentProcessorService` | `class` | `contracts/models.py` |
 | `IngestionContext` | `class` | `tools/ingestion_parser.py` |
 | `IngestionParser` | `class` | `tools/ingestion_parser.py` |
 | `InstallerTests` | `class` | `tests/test_governance.py` |
 | `MultiSubagentOrchestrator` | `class` | `tools/subagent_workflow.py` |
+| `ParallelSwarmOrchestrator` | `class` | `tools/subagent_workflow.py` |
 | `PaymentProcessorError` | `class` | `src/billing/payment_processor.py` |
 | `PaymentProcessorPayload` | `class` | `contracts/models.py` |
 | `PaymentProcessorRequest` | `class` | `src/billing/payment_processor.py` |
 | `PaymentProcessorResult` | `class` | `contracts/models.py` |
 | `PaymentProcessorResult` | `class` | `src/billing/payment_processor.py` |
+| `ResourceCollisionError` | `class` | `tools/subagent_workflow.py` |
+| `SelfHealingBudgetExceededError` | `class` | `tools/subagent_workflow.py` |
 | `SubagentRole` | `class` | `tools/subagent_workflow.py` |
 | `SubagentWorkflowResult` | `class` | `tools/subagent_workflow.py` |
+| `TandemExecutionWorker` | `class` | `tools/subagent_workflow.py` |
 | `TestBillingService` | `class` | `tests/test_billing_service.py` |
 | `TestGenesisPipelineV81` | `class` | `tests/test_genesis_v81.py` |
 | `TestPaymentProcessor` | `class` | `tests/test_payment_processor.py` |
@@ -36,6 +43,7 @@
 | `V75NativeIntegrationTests` | `class` | `tests/test_governance.py` |
 | `V7EvidenceAndGovernanceTests` | `class` | `tests/test_governance.py` |
 | `V8MultiWorkspaceAndPerformanceTests` | `class` | `tests/test_governance.py` |
+| `WorkflowError` | `class` | `tools/subagent_workflow.py` |
 | `__post_init__` | `function` | `src/billing/billing_service.py` |
 | `__post_init__` | `function` | `src/billing/payment_processor.py` |
 | `_analyze_content` | `function` | `tools/ingestion_parser.py` |
@@ -60,3 +68,5 @@
 | `evidence` | `task_id TEXT` | `evidence_hash`, `timestamp` | Kryptograficzne dowody G5/G5.2 |
 | `discovery_runs` | `run_id TEXT` | `project_slug`, `archetype`, `status` | Przebiegi Discovery & Inception DAG |
 | `discovery_checkpoints` | `checkpoint_id TEXT` | `FOREIGN KEY (run_id) REFERENCES discovery_runs(run_id)` | Nienaruszalne punkty kontrolne etapów discovery |
+| `task_iterations` | `task TEXT, iteration INTEGER` | `builder_actor`, `supervisor_actor`, `status` | Dziennik iteracji pętli doskonalenia kodu (self-healing loop) |
+| `task_supervision_logs` | `log_id TEXT` | `task`, `supervisor_session`, `verdict` | Niezależny rejestr audytów i werdyktów task-supervisora |

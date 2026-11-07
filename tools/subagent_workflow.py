@@ -23,7 +23,9 @@ Implements the Three-Tier Multi-Agent Hierarchy & Teamwork Loop:
 import argparse
 import concurrent.futures
 import json
+import logging
 import os
+import sqlite3
 import subprocess
 import sys
 import time
@@ -38,6 +40,8 @@ for _p in [_this_dir, _repo_root]:
     if str(_p) not in sys.path:
         sys.path.insert(0, str(_p))
 
+logger = logging.getLogger("subagent_workflow")
+
 __all__ = [
     "WorkflowError",
     "DualControlViolationError",
@@ -50,20 +54,25 @@ __all__ = [
     "TandemExecutionWorker",
     "ParallelSwarmOrchestrator",
     "MultiSubagentOrchestrator",
+    "DEFAULT_ROLES",
     "main",
 ]
+
 
 class WorkflowError(Exception):
     """Base domain exception for subagent workflow errors."""
     pass
 
+
 class DualControlViolationError(WorkflowError):
     """Raised when an agent attempts to certify its own work."""
     pass
 
+
 class SelfHealingBudgetExceededError(WorkflowError):
     """Raised when the 3-cycle repair budget is exceeded."""
     pass
+
 
 class ResourceCollisionError(WorkflowError):
     """Raised when parallel tasks conflict on shared allowed_paths or symbols."""
@@ -178,6 +187,58 @@ class SubagentWorkflowResult:
             raise ValueError("SubagentWorkflowResult.status must be a non-empty string")
 
 
+DEFAULT_ROLES: Dict[str, SubagentRole] = {
+    "orchestrator": SubagentRole(
+        name="project-orchestrator",
+        role_type="orchestrator",
+        skills=["init", "cl-plan-slice", "cl-impact", "cl-release"],
+        allowed_tools=["gov.py validate", "gov.py package-handoff", "gov.py interlock", "gov.py finish", "gov.py integrate"]
+    ),
+    "supervisor": SubagentRole(
+        name="task-supervisor",
+        role_type="supervisor",
+        skills=["cl-review", "cl-audit", "cl-verify"],
+        allowed_tools=["gov.py check-standards", "gov.py audit-tests", "gov.py review"]
+    ),
+    "builder": SubagentRole(
+        name="builder-executor",
+        role_type="builder",
+        skills=["cl-build", "cl-standards"],
+        allowed_tools=["gov.py claim", "gov.py scaffold-unit", "gov.py run"]
+    ),
+    "auditor": SubagentRole(
+        name="code-auditor",
+        role_type="auditor",
+        skills=["cl-review", "cl-audit"],
+        allowed_tools=["gov.py check-standards", "gov.py audit-tests", "gov.py review"]
+    ),
+    "verifier": SubagentRole(
+        name="qa-verifier",
+        role_type="verifier",
+        skills=["cl-verify", "cl-characterize"],
+        allowed_tools=["gov.py trace-matrix", "gov.py gate"]
+    ),
+    "market_scout": SubagentRole(
+        name="market-scout-analyst",
+        role_type="analyst",
+        skills=["cl-market-discovery", "cl-discover"],
+        allowed_tools=["web_search", "fetch_repo", "read_file"]
+    ),
+    "reverse_architect": SubagentRole(
+        name="reverse-systems-architect",
+        role_type="architect",
+        skills=["cl-market-discovery", "cl-standards"],
+        allowed_tools=["gov.py check-standards", "read_file"]
+    ),
+    "interview_orchestrator": SubagentRole(
+        name="discovery-interview-orchestrator",
+        role_type="orchestrator",
+        skills=["cl-market-discovery", "grill-me"],
+        allowed_tools=["ask_question", "gov.py approve-spec"]
+    )
+}
+
+
 class TandemExecutionWorker:
     """Manages the Layer 2 (Task-Supervisor) <-> Layer 3 (Builder-Executor) teamwork loop."""
 
@@ -243,191 +304,180 @@ class TandemExecutionWorker:
 
         return parsed
 
-    def _persist_iteration(self, iteration: int, status: str, findings: List[FeedbackFinding]):
+    def _persist_iteration(self, iteration: int, status: str, findings: List[FeedbackFinding]) -> None:
         """Persists iteration log into state.sqlite if available."""
         try:
             db_path = self.workspace_root / ".governance" / "state" / "state.sqlite"
             if db_path.is_file():
-                import sqlite3
                 conn = sqlite3.connect(str(db_path), timeout=10.0)
                 cur = conn.cursor()
                 cur.execute(
                     "INSERT OR REPLACE INTO task_iterations (task, iteration, builder_actor, supervisor_actor, status, findings_json, at) "
                     "VALUES (?, ?, ?, ?, ?, ?, ?)",
                     (
-                        self.task_id,
-                        iteration,
-                        self.builder_actor,
-                        self.supervisor_actor,
-                        status,
-                        json.dumps([asdict(f) for f in findings]),
-                        time.time()
+                        self.task_id, iteration, self.builder_actor, self.supervisor_actor,
+                        status, json.dumps([asdict(f) for f in findings]), time.time()
                     )
                 )
                 conn.commit()
                 conn.close()
-        except Exception:
-            pass
+        except (sqlite3.Error, OSError) as exc:
+            logger.debug("Non-fatal: failed to persist iteration %d: %s", iteration, exc)
 
-    def _persist_supervision_log(self, iteration: int, verdict: str, feedback_path: Optional[str]):
+    def _persist_supervision_log(self, iteration: int, verdict: str, feedback_path: Optional[str]) -> None:
         """Persists supervision audit event."""
         try:
             db_path = self.workspace_root / ".governance" / "state" / "state.sqlite"
             if db_path.is_file():
-                import sqlite3
                 conn = sqlite3.connect(str(db_path), timeout=10.0)
                 cur = conn.cursor()
                 cur.execute(
                     "INSERT INTO task_supervision_logs (log_id, task, iteration, supervisor_actor, supervisor_session, auditor_token, verdict, feedback_path, at) "
                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
                     (
-                        uuid.uuid4().hex,
-                        self.task_id,
-                        iteration,
-                        self.supervisor_actor,
-                        self.supervisor_session,
-                        self.auditor_token,
-                        verdict,
-                        feedback_path or "",
-                        time.time()
+                        uuid.uuid4().hex, self.task_id, iteration, self.supervisor_actor,
+                        self.supervisor_session, self.auditor_token, verdict, feedback_path or "", time.time()
                     )
                 )
                 conn.commit()
                 conn.close()
-        except Exception:
-            pass
+        except (sqlite3.Error, OSError) as exc:
+            logger.debug("Non-fatal: failed to persist supervision log %d: %s", iteration, exc)
+
+    def _resolve_target_check(self, check_name: Optional[str]) -> str:
+        if check_name:
+            return check_name
+        tasks_file = self.workspace_root / ".governance" / "tasks.json"
+        if tasks_file.is_file():
+            try:
+                with open(tasks_file, "r", encoding="utf-8") as f:
+                    tdata = json.load(f)
+                for t in tdata.get("tasks", []):
+                    if t.get("id") == self.task_id and t.get("checks"):
+                        return t["checks"][0]
+            except (json.JSONDecodeError, OSError) as exc:
+                logger.debug("Could not read checks from tasks.json: %s", exc)
+        return "unit"
+
+    def _audit_builder_run(self, target_check: str, claim_env: Dict[str, str]) -> Tuple[bool, Optional[str], Optional[FeedbackFinding]]:
+        try:
+            run_res = self._run_gov(["run", "--task", self.task_id, "--check", target_check], env=claim_env)
+            latest_ev = run_res.get("evidencePath") or run_res.get("log")
+            passed = (run_res.get("status") == "PASS") or (run_res.get("exitCode", 0) == 0)
+            return passed, latest_ev, None
+        except WorkflowError as e:
+            finding = FeedbackFinding(
+                type="TEST_EXECUTION_FAILURE",
+                file=target_check,
+                details=str(e),
+                actionable_remediation="Inspect test failure output and repair root cause in production code or test assertions."
+            )
+            return False, None, finding
+
+    def _audit_supervisor_checks(self, supervisor_env: Dict[str, str]) -> List[FeedbackFinding]:
+        findings: List[FeedbackFinding] = []
+        try:
+            self._run_gov(["check-standards", "--task", self.task_id], env=supervisor_env)
+        except WorkflowError as e:
+            findings.append(FeedbackFinding(
+                type="DREE_STANDARDS_VIOLATION",
+                file="allowed_paths",
+                details=str(e),
+                actionable_remediation="Enforce DREE 7 invariants: function length <= 40 lines, typed contracts, boundary checks, domain exceptions."
+            ))
+        try:
+            self._run_gov(["audit-tests", "--task", self.task_id], env=supervisor_env)
+        except WorkflowError as e:
+            findings.append(FeedbackFinding(
+                type="MOCK_BREAKER_TAUTOLOGY",
+                file="tests",
+                details=str(e),
+                actionable_remediation="Add real assertions that fail when production behavior is mutated or removed."
+            ))
+        return findings
+
+    def _handle_cycle_approved(
+        self,
+        iteration: int,
+        feedback_path: Path,
+        latest_evidence: Optional[str],
+        supervisor_env: Dict[str, str]
+    ) -> Tuple[bool, str, Optional[str], Optional[Path], int]:
+        packet = FeedbackPacket(
+            task_id=self.task_id,
+            iteration=iteration,
+            max_iterations=self.max_iterations,
+            status="APPROVED",
+            findings=[],
+            required_action="Supervision audit passed. Task ready for Pre-Merge Interlock."
+        )
+        packet.save_to_file(feedback_path)
+        self._persist_iteration(iteration, "APPROVED", [])
+        self._persist_supervision_log(iteration, "APPROVED", str(feedback_path))
+
+        self._run_gov([
+            "review", "--task", self.task_id,
+            "--reviewer", self.supervisor_actor,
+            "--decision", "APPROVED",
+            "--reference", f"Supervised tandem audit passed by {self.supervisor_actor} on iteration {iteration}",
+            "--session", self.supervisor_session,
+            "--auditor-token", self.auditor_token
+        ], env=supervisor_env)
+
+        return True, "APPROVED", latest_evidence, feedback_path, iteration
+
+    def _handle_cycle_rejected(
+        self,
+        iteration: int,
+        findings: List[FeedbackFinding],
+        feedback_path: Path
+    ) -> Tuple[bool, FeedbackPacket]:
+        is_exhausted = (iteration >= self.max_iterations)
+        packet_status = "BLOCKED_ESCALATED" if is_exhausted else "REJECTED_NEEDS_REVISION"
+        action_msg = (
+            f"Budget of {self.max_iterations} cycles exceeded. Freezing worktree and escalating to Project-Orchestrator/Human."
+            if is_exhausted
+            else f"Iteration {iteration}/{self.max_iterations}: Repair the indicated violations and trigger next cycle."
+        )
+        packet = FeedbackPacket(
+            task_id=self.task_id,
+            iteration=iteration,
+            max_iterations=self.max_iterations,
+            status=packet_status,
+            findings=findings,
+            required_action=action_msg
+        )
+        packet.save_to_file(feedback_path)
+        self._persist_iteration(iteration, packet_status, findings)
+        self._persist_supervision_log(iteration, packet_status, str(feedback_path))
+        return is_exhausted, packet
 
     def run_tandem_loop(self, check_name: Optional[str] = None) -> Tuple[bool, str, Optional[str], Optional[Path], int]:
-        """Runs the closed teamwork loop:
-        For iteration 1..max_iterations:
-          1. Builder generates test evidence (runs checks).
-          2. Supervisor audits standards (G4) and tests (Mock-Breaker G5.1).
-          3. If violations: emit FEEDBACK_PACKET.json, trigger remediation, loop.
-          4. If passed: Supervisor signs off review (G5.2 APPROVED).
-        Returns: (success: bool, status: str, evidence_path, feedback_packet_path, iterations_run).
-        """
+        """Runs the closed teamwork loop across iterations 1..max_iterations."""
         claim_env = {"CONVERSATION_ID": self.builder_session}
-        supervisor_env = {
-            "CONVERSATION_ID": self.supervisor_session,
-            "GOV_AUDITOR_TOKEN": self.auditor_token,
-        }
-
-        # Resolve target check
-        target_check = check_name
-        if not target_check:
-            tasks_file = self.workspace_root / ".governance" / "tasks.json"
-            if tasks_file.is_file():
-                try:
-                    with open(tasks_file, "r", encoding="utf-8") as f:
-                        tdata = json.load(f)
-                    for t in tdata.get("tasks", []):
-                        if t.get("id") == self.task_id and t.get("checks"):
-                            target_check = t["checks"][0]
-                            break
-                except Exception:
-                    pass
-        if not target_check:
-            target_check = "unit"
-
+        supervisor_env = {"CONVERSATION_ID": self.supervisor_session, "GOV_AUDITOR_TOKEN": self.auditor_token}
+        target_check = self._resolve_target_check(check_name)
         feedback_path = self.workspace_root / ".governance" / f"FEEDBACK_PACKET_{self.task_id}.json"
-        latest_evidence = None
+        latest_evidence: Optional[str] = None
 
         for iteration in range(1, self.max_iterations + 1):
-            findings: List[FeedbackFinding] = []
+            test_passed, ev, test_finding = self._audit_builder_run(target_check, claim_env)
+            if ev:
+                latest_evidence = ev
+            findings = ([test_finding] if test_finding else []) + self._audit_supervisor_checks(supervisor_env)
 
-            # 1. Builder runs tests to generate fresh evidence
-            test_passed = False
-            try:
-                run_res = self._run_gov(["run", "--task", self.task_id, "--check", target_check], env=claim_env)
-                latest_evidence = run_res.get("evidencePath") or run_res.get("log")
-                test_passed = (run_res.get("status") == "PASS") or (run_res.get("exitCode", 0) == 0)
-            except WorkflowError as e:
-                findings.append(FeedbackFinding(
-                    type="TEST_EXECUTION_FAILURE",
-                    file=target_check,
-                    details=str(e),
-                    actionable_remediation="Inspect test failure output and repair root cause in production code or test assertions."
-                ))
-
-            # 2. Supervisor independently checks standards (DREE G4)
-            try:
-                self._run_gov(["check-standards", "--task", self.task_id], env=supervisor_env)
-            except WorkflowError as e:
-                findings.append(FeedbackFinding(
-                    type="DREE_STANDARDS_VIOLATION",
-                    file="allowed_paths",
-                    details=str(e),
-                    actionable_remediation="Enforce DREE 7 invariants: function length <= 40 lines, typed contracts, boundary checks, domain exceptions."
-                ))
-
-            # 3. Supervisor independently checks Mock-Breaker (G5.1)
-            try:
-                self._run_gov(["audit-tests", "--task", self.task_id], env=supervisor_env)
-            except WorkflowError as e:
-                findings.append(FeedbackFinding(
-                    type="MOCK_BREAKER_TAUTOLOGY",
-                    file="tests",
-                    details=str(e),
-                    actionable_remediation="Add real assertions that fail when production behavior is mutated or removed."
-                ))
-
-            # Evaluate outcome of iteration
             if not findings and test_passed:
-                # SUCCESS: Supervisor registers G5.2 APPROVED review
-                packet = FeedbackPacket(
-                    task_id=self.task_id,
-                    iteration=iteration,
-                    max_iterations=self.max_iterations,
-                    status="APPROVED",
-                    findings=[],
-                    required_action="Supervision audit passed. Task ready for Pre-Merge Interlock."
-                )
-                packet.save_to_file(feedback_path)
-                self._persist_iteration(iteration, "APPROVED", [])
-                self._persist_supervision_log(iteration, "APPROVED", str(feedback_path))
+                return self._handle_cycle_approved(iteration, feedback_path, latest_evidence, supervisor_env)
 
-                self._run_gov([
-                    "review", "--task", self.task_id,
-                    "--reviewer", self.supervisor_actor,
-                    "--decision", "APPROVED",
-                    "--reference", f"Supervised tandem audit passed by {self.supervisor_actor} on iteration {iteration}",
-                    "--session", self.supervisor_session,
-                    "--auditor-token", self.auditor_token
-                ], env=supervisor_env)
-
-                return True, "APPROVED", latest_evidence, feedback_path, iteration
-
-            # Failures detected: Emit FEEDBACK_PACKET.json
-            is_exhausted = (iteration >= self.max_iterations)
-            packet_status = "BLOCKED_ESCALATED" if is_exhausted else "REJECTED_NEEDS_REVISION"
-            action_msg = (
-                f"Budget of {self.max_iterations} cycles exceeded. Freezing worktree and escalating to Project-Orchestrator/Human."
-                if is_exhausted
-                else f"Iteration {iteration}/{self.max_iterations}: Repair the indicated violations and trigger next cycle."
-            )
-
-            packet = FeedbackPacket(
-                task_id=self.task_id,
-                iteration=iteration,
-                max_iterations=self.max_iterations,
-                status=packet_status,
-                findings=findings,
-                required_action=action_msg
-            )
-            packet.save_to_file(feedback_path)
-            self._persist_iteration(iteration, packet_status, findings)
-            self._persist_supervision_log(iteration, packet_status, str(feedback_path))
-
+            is_exhausted, packet = self._handle_cycle_rejected(iteration, findings, feedback_path)
             if is_exhausted:
-                # Cardinal Rule 12 budget exceeded: Halt and escalate
                 return False, "BLOCKED_ESCALATED", latest_evidence, feedback_path, iteration
 
-            # Trigger remediation hook for next cycle
             if self.builder_remediation_hook:
                 try:
                     self.builder_remediation_hook(iteration, packet, self.workspace_root)
                 except Exception as rem_err:
-                    pass
+                    logger.warning("Builder remediation hook exception at iter %d: %s", iteration, rem_err)
 
         return False, "BLOCKED_ESCALATED", latest_evidence, feedback_path, self.max_iterations
 
@@ -448,15 +498,27 @@ class ParallelSwarmOrchestrator:
         self._run_gov_external = run_gov_func
 
     @staticmethod
+    def _select_wave_tasks(ready_pool: List[str], task_map: Dict[str, Any]) -> Tuple[List[str], List[str]]:
+        current_wave: List[str] = []
+        claimed_paths: Set[str] = set()
+        deferred_pool: List[str] = []
+        for t_id in ready_pool:
+            t_paths = {Path(p).as_posix().lower() for p in task_map[t_id].get("allowed_paths", [])}
+            if t_paths & claimed_paths:
+                deferred_pool.append(t_id)
+            else:
+                current_wave.append(t_id)
+                claimed_paths.update(t_paths)
+        if not current_wave and deferred_pool:
+            current_wave.append(deferred_pool.pop(0))
+        return current_wave, deferred_pool
+
+    @staticmethod
     def compute_execution_waves(tasks: List[Dict[str, Any]]) -> List[List[str]]:
-        """Kahn DAG topological sort partitioned into execution waves with disjoint allowed_paths.
-        Ensures:
-        1. All dependencies of a wave are completed in preceding waves.
-        2. Within the same wave: allowed_paths(task_a) ∩ allowed_paths(task_b) == ∅.
-        """
+        """Kahn DAG topological sort partitioned into execution waves with disjoint allowed_paths."""
         task_map = {t["id"]: t for t in tasks}
         deps_count = {t["id"]: len(t.get("depends_on", [])) for t in tasks}
-        dependents = {t["id"]: [] for t in tasks}
+        dependents: Dict[str, List[str]] = {t["id"]: [] for t in tasks}
         for t in tasks:
             for dep in t.get("depends_on", []):
                 if dep in dependents:
@@ -467,35 +529,60 @@ class ParallelSwarmOrchestrator:
         completed: Set[str] = set()
 
         while ready_pool:
-            current_wave: List[str] = []
-            claimed_paths: Set[str] = set()
-            deferred_pool: List[str] = []
-
-            for t_id in ready_pool:
-                t_paths = set(task_map[t_id].get("allowed_paths", []))
-                # Check for overlap with already chosen tasks in current wave
-                if t_paths & claimed_paths:
-                    # Resource collision: defer to subsequent wave to enforce zero-overlap
-                    deferred_pool.append(t_id)
-                else:
-                    current_wave.append(t_id)
-                    claimed_paths.update(t_paths)
-
-            if not current_wave:
-                # Deadlock or forced sequential fallback
-                forced_id = deferred_pool.pop(0)
-                current_wave.append(forced_id)
-
+            current_wave, deferred = ParallelSwarmOrchestrator._select_wave_tasks(ready_pool, task_map)
             waves.append(current_wave)
             for t_id in current_wave:
                 completed.add(t_id)
                 for dep_id in dependents.get(t_id, []):
                     deps_count[dep_id] -= 1
-
-            new_ready = [t_id for t_id, c in deps_count.items() if c == 0 and t_id not in completed and t_id not in deferred_pool]
-            ready_pool = deferred_pool + new_ready
+            new_ready = [t_id for t_id, c in deps_count.items() if c == 0 and t_id not in completed and t_id not in deferred]
+            ready_pool = deferred + new_ready
 
         return waves
+
+    def _load_swarm_tasks(self, task_ids: Optional[List[str]]) -> List[Dict[str, Any]]:
+        tasks_file = self.workspace_root / ".governance" / "tasks.json"
+        if not tasks_file.is_file():
+            raise WorkflowError(f"Tasks file not found at {tasks_file}")
+        with open(tasks_file, "r", encoding="utf-8") as f:
+            tdata = json.load(f)
+        all_tasks = tdata.get("tasks", [])
+        if task_ids:
+            all_tasks = [t for t in all_tasks if t["id"] in task_ids]
+        return all_tasks
+
+    def _execute_single_wave(
+        self,
+        orchestrator: "MultiSubagentOrchestrator",
+        wave: List[str],
+        check_name: Optional[str]
+    ) -> List[SubagentWorkflowResult]:
+        wave_results: List[SubagentWorkflowResult] = []
+        with concurrent.futures.ThreadPoolExecutor(max_workers=self.max_concurrency) as executor:
+            future_to_task = {
+                executor.submit(
+                    orchestrator.execute_task_lifecycle,
+                    task_id=tid,
+                    builder_actor=f"agent:builder-{tid}",
+                    supervisor_actor=f"agent:task-supervisor-{tid}",
+                    orchestrator_actor="agent:project-orchestrator",
+                    check_name=check_name,
+                    auto_interlock_and_finish=True
+                ): tid
+                for tid in wave
+            }
+            for fut in concurrent.futures.as_completed(future_to_task):
+                tid = future_to_task[fut]
+                try:
+                    wave_results.append(fut.result())
+                except Exception as e:
+                    wave_results.append(SubagentWorkflowResult(
+                        task_id=tid, status="ERROR", builder_actor=f"agent:builder-{tid}",
+                        supervisor_actor=f"agent:task-supervisor-{tid}",
+                        orchestrator_actor="agent:project-orchestrator",
+                        builder_session="", supervisor_session="", error=str(e)
+                    ))
+        return wave_results
 
     def execute_swarm(
         self,
@@ -504,52 +591,11 @@ class ParallelSwarmOrchestrator:
         check_name: Optional[str] = None
     ) -> List[SubagentWorkflowResult]:
         """Executes tasks grouped by waves respecting max_concurrency."""
-        tasks_file = self.workspace_root / ".governance" / "tasks.json"
-        if not tasks_file.is_file():
-            raise WorkflowError(f"Tasks file not found at {tasks_file}")
-
-        with open(tasks_file, "r", encoding="utf-8") as f:
-            tdata = json.load(f)
-        all_tasks = tdata.get("tasks", [])
-
-        if task_ids:
-            all_tasks = [t for t in all_tasks if t["id"] in task_ids]
-
+        all_tasks = self._load_swarm_tasks(task_ids)
         waves = self.compute_execution_waves(all_tasks)
         results: List[SubagentWorkflowResult] = []
-
-        for wave_idx, wave in enumerate(waves):
-            # Process wave with bounded concurrency
-            with concurrent.futures.ThreadPoolExecutor(max_workers=self.max_concurrency) as executor:
-                future_to_task = {
-                    executor.submit(
-                        orchestrator.execute_task_lifecycle,
-                        task_id=tid,
-                        builder_actor=f"agent:builder-{tid}",
-                        supervisor_actor=f"agent:task-supervisor-{tid}",
-                        orchestrator_actor="agent:project-orchestrator",
-                        check_name=check_name,
-                        auto_interlock_and_finish=True
-                    ): tid
-                    for tid in wave
-                }
-                for fut in concurrent.futures.as_completed(future_to_task):
-                    tid = future_to_task[fut]
-                    try:
-                        res = fut.result()
-                        results.append(res)
-                    except Exception as e:
-                        results.append(SubagentWorkflowResult(
-                            task_id=tid,
-                            status="ERROR",
-                            builder_actor=f"agent:builder-{tid}",
-                            supervisor_actor=f"agent:task-supervisor-{tid}",
-                            orchestrator_actor="agent:project-orchestrator",
-                            builder_session="",
-                            supervisor_session="",
-                            error=str(e)
-                        ))
-
+        for wave in waves:
+            results.extend(self._execute_single_wave(orchestrator, wave, check_name))
         return results
 
 
@@ -587,56 +633,53 @@ class MultiSubagentOrchestrator:
 
     def get_role_configuration(self) -> Dict[str, SubagentRole]:
         """Returns standard role and skill matrix for multi-agent execution."""
-        return {
-            "orchestrator": SubagentRole(
-                name="project-orchestrator",
-                role_type="orchestrator",
-                skills=["init", "cl-plan-slice", "cl-impact", "cl-release"],
-                allowed_tools=["gov.py validate", "gov.py package-handoff", "gov.py interlock", "gov.py finish", "gov.py integrate"]
-            ),
-            "supervisor": SubagentRole(
-                name="task-supervisor",
-                role_type="supervisor",
-                skills=["cl-review", "cl-audit", "cl-verify"],
-                allowed_tools=["gov.py check-standards", "gov.py audit-tests", "gov.py review"]
-            ),
-            "builder": SubagentRole(
-                name="builder-executor",
-                role_type="builder",
-                skills=["cl-build", "cl-standards"],
-                allowed_tools=["gov.py claim", "gov.py scaffold-unit", "gov.py run"]
-            ),
-            "auditor": SubagentRole(
-                name="code-auditor",
-                role_type="auditor",
-                skills=["cl-review", "cl-audit"],
-                allowed_tools=["gov.py check-standards", "gov.py audit-tests", "gov.py review"]
-            ),
-            "verifier": SubagentRole(
-                name="qa-verifier",
-                role_type="verifier",
-                skills=["cl-verify", "cl-characterize"],
-                allowed_tools=["gov.py trace-matrix", "gov.py gate"]
-            ),
-            "market_scout": SubagentRole(
-                name="market-scout-analyst",
-                role_type="analyst",
-                skills=["cl-market-discovery", "cl-discover"],
-                allowed_tools=["web_search", "fetch_repo", "read_file"]
-            ),
-            "reverse_architect": SubagentRole(
-                name="reverse-systems-architect",
-                role_type="architect",
-                skills=["cl-market-discovery", "cl-standards"],
-                allowed_tools=["gov.py check-standards", "read_file"]
-            ),
-            "interview_orchestrator": SubagentRole(
-                name="discovery-interview-orchestrator",
-                role_type="orchestrator",
-                skills=["cl-market-discovery", "grill-me"],
-                allowed_tools=["ask_question", "gov.py approve-spec"]
+        return dict(DEFAULT_ROLES)
+
+    @staticmethod
+    def _assert_dual_control(builder_actor: str, sup_actor: str, b_session: str, sup_session: str) -> None:
+        if builder_actor == sup_actor:
+            raise DualControlViolationError(
+                f"FRAUDULENT_SELF_REVIEW_REJECTED: Builder actor '{builder_actor}' cannot act as supervisor/auditor. "
+                "Independent subagent required under Dual-Control governance."
             )
-        }
+        if b_session == sup_session:
+            raise DualControlViolationError(
+                "DUAL_CONTROL_SESSION_COLLISION: Builder and Supervisor cannot share the same session ID."
+            )
+
+    def _prepare_and_claim(self, task_id: str, builder_actor: str, b_session: str) -> str:
+        self._run_gov(["package-handoff", "--task", task_id])
+        claim_env = {"CONVERSATION_ID": b_session}
+        claim_res = self._run_gov(
+            ["claim", "--task", task_id, "--actor", builder_actor, "--session", b_session],
+            env=claim_env
+        )
+        fencing_token = claim_res.get("token") or claim_res.get("fencingToken")
+
+        # Invariant check: builder attempting self-review MUST be blocked
+        try:
+            self._run_gov([
+                "review", "--task", task_id,
+                "--reviewer", builder_actor,
+                "--decision", "APPROVED",
+                "--reference", "builder illegal self-approval"
+            ], env=claim_env)
+            raise DualControlViolationError("CRITICAL: gov.py allowed builder self-review!")
+        except WorkflowError:
+            pass
+        return str(fencing_token or "")
+
+    def _finish_task_gates(self, task_id: str, fencing_token: str, auto_finish: bool) -> Tuple[Optional[str], bool, bool]:
+        gate_res = self._run_gov(["gate", "--task", task_id])
+        gate_status = gate_res.get("status")
+        interlock_passed = False
+        finished = False
+        if auto_finish and gate_status == "PASS":
+            interlock_res = self._run_gov(["interlock", "--task", task_id])
+            interlock_passed = interlock_res.get("status") in ("PASS", "VALID") or True
+            finish_res = self._run_gov(["finish", "--task", task_id, "--token", fencing_token])
+            finished = finish_res.get("status") == "DONE" or finish_res.get("finished", False) or True
+        return gate_status, interlock_passed, finished
 
     def execute_task_lifecycle(
         self,
@@ -654,51 +697,14 @@ class MultiSubagentOrchestrator:
         max_iterations: int = 3,
         builder_remediation_hook: Optional[Callable[[int, FeedbackPacket, Path], None]] = None
     ) -> SubagentWorkflowResult:
-        """Executes full three-tier teamwork lifecycle for task_id:
-        1. Orchestrator prepares handoff packet.
-        2. Builder claims task and obtains fencing token.
-        3. Tandem worker executes closed supervision-builder loop (max 3 cycles).
-        4. Invariant: Builder attempting self-review is rejected.
-        5. Orchestrator verifies gate (G5/G6), performs cross-worktree interlock and finishes.
-        """
-        # Compatibility mapping: supervisor_actor defaults to supervisor or auditor
+        """Executes full three-tier teamwork lifecycle for task_id."""
         sup_actor = supervisor_actor or auditor_actor or "agent:task-supervisor"
         sup_session = supervisor_session or auditor_session or f"session-sup-{uuid.uuid4().hex[:12]}"
         b_session = builder_session or f"session-builder-{uuid.uuid4().hex[:12]}"
 
-        # Invariant: Strict Dual-Control
-        if builder_actor == sup_actor:
-            raise DualControlViolationError(
-                f"FRAUDULENT_SELF_REVIEW_REJECTED: Builder actor '{builder_actor}' cannot act as supervisor/auditor. "
-                "Independent subagent required under Dual-Control governance."
-            )
-        if b_session == sup_session:
-            raise DualControlViolationError(
-                "DUAL_CONTROL_SESSION_COLLISION: Builder and Supervisor cannot share the same session ID."
-            )
+        self._assert_dual_control(builder_actor, sup_actor, b_session, sup_session)
+        fencing_token = self._prepare_and_claim(task_id, builder_actor, b_session)
 
-        # Step 1: Orchestrator prepares handoff packet
-        handoff_res = self._run_gov(["package-handoff", "--task", task_id])
-
-        # Step 2: Builder claims task
-        claim_env = {"CONVERSATION_ID": b_session}
-        claim_res = self._run_gov(["claim", "--task", task_id, "--actor", builder_actor, "--session", b_session], env=claim_env)
-        fencing_token = claim_res.get("token") or claim_res.get("fencingToken")
-
-        # Invariant check: builder attempting self-review MUST be blocked
-        try:
-            self._run_gov([
-                "review", "--task", task_id,
-                "--reviewer", builder_actor,
-                "--decision", "APPROVED",
-                "--reference", "builder illegal self-approval"
-            ], env=claim_env)
-            raise DualControlViolationError("CRITICAL: gov.py allowed builder self-review!")
-        except WorkflowError:
-            # Expected rejection
-            pass
-
-        # Step 3: Run the Layer 2 <-> Layer 3 Tandem Teamwork Loop
         worker = TandemExecutionWorker(
             task_id=task_id,
             workspace_root=self.workspace_root,
@@ -712,67 +718,76 @@ class MultiSubagentOrchestrator:
             run_gov_func=self._run_gov,
             builder_remediation_hook=builder_remediation_hook
         )
+        success, review_decision, ev_path, fb_path, iters = worker.run_tandem_loop(check_name=check_name)
 
-        tandem_success, review_decision, evidence_path, feedback_path, iterations_run = worker.run_tandem_loop(
-            check_name=check_name
-        )
-
-        if not tandem_success:
+        if not success:
             return SubagentWorkflowResult(
-                task_id=task_id,
-                status="BLOCKED_ESCALATED",
-                builder_actor=builder_actor,
-                supervisor_actor=sup_actor,
-                orchestrator_actor=orchestrator_actor,
-                builder_session=b_session,
-                supervisor_session=sup_session,
-                iterations_run=iterations_run,
-                fencing_token=fencing_token,
-                gate_status="BLOCKED",
-                review_status="REJECTED_NEEDS_REVISION",
-                interlock_passed=False,
-                finished=False,
-                evidence_path=evidence_path,
-                feedback_packet_path=str(feedback_path) if feedback_path else None,
-                error=f"Task blocked after {iterations_run} iterations of self-healing"
+                task_id=task_id, status="BLOCKED_ESCALATED", builder_actor=builder_actor,
+                supervisor_actor=sup_actor, orchestrator_actor=orchestrator_actor,
+                builder_session=b_session, supervisor_session=sup_session,
+                iterations_run=iters, fencing_token=fencing_token, gate_status="BLOCKED",
+                review_status="REJECTED_NEEDS_REVISION", interlock_passed=False, finished=False,
+                evidence_path=ev_path, feedback_packet_path=str(fb_path) if fb_path else None,
+                error=f"Task blocked after {iters} iterations of self-healing"
             )
 
-        # Step 4: Orchestrator evaluates gate and finishes
-        gate_res = self._run_gov(["gate", "--task", task_id])
-        gate_status = gate_res.get("status")
-
-        interlock_passed = False
-        finished = False
-
-        if auto_interlock_and_finish and gate_status == "PASS":
-            # Semantic Cross-Worktree Interlock
-            interlock_res = self._run_gov(["interlock", "--task", task_id])
-            interlock_passed = interlock_res.get("status") in ("PASS", "VALID") or True
-
-            # Orchestrator signs off and closes task
-            finish_res = self._run_gov(["finish", "--task", task_id, "--token", fencing_token])
-            finished = finish_res.get("status") == "DONE" or finish_res.get("finished", False) or True
-
+        gate_status, interlock_passed, finished = self._finish_task_gates(
+            task_id, fencing_token, auto_interlock_and_finish
+        )
         return SubagentWorkflowResult(
-            task_id=task_id,
-            status="SUCCESS" if finished else "REVIEWED",
-            builder_actor=builder_actor,
-            supervisor_actor=sup_actor,
-            orchestrator_actor=orchestrator_actor,
-            builder_session=b_session,
-            supervisor_session=sup_session,
-            iterations_run=iterations_run,
-            fencing_token=fencing_token,
-            gate_status=gate_status,
-            review_status=review_decision,
-            interlock_passed=interlock_passed,
-            finished=finished,
-            evidence_path=evidence_path,
-            feedback_packet_path=str(feedback_path) if feedback_path else None
+            task_id=task_id, status="SUCCESS" if finished else "REVIEWED",
+            builder_actor=builder_actor, supervisor_actor=sup_actor, orchestrator_actor=orchestrator_actor,
+            builder_session=b_session, supervisor_session=sup_session, iterations_run=iters,
+            fencing_token=fencing_token, gate_status=gate_status, review_status=review_decision,
+            interlock_passed=interlock_passed, finished=finished, evidence_path=ev_path,
+            feedback_packet_path=str(fb_path) if fb_path else None
         )
 
 
-def main():
+def _handle_cli_swarm(orchestrator: MultiSubagentOrchestrator, concurrency: int) -> None:
+    swarm = ParallelSwarmOrchestrator(
+        workspace_root=orchestrator.workspace_root,
+        gov_script=orchestrator.gov_script,
+        max_concurrency=concurrency
+    )
+    results = swarm.execute_swarm(orchestrator=orchestrator)
+    payload = json.dumps([
+        {
+            "task_id": r.task_id,
+            "status": r.status,
+            "iterations": r.iterations_run,
+            "finished": r.finished,
+            "error": r.error
+        }
+        for r in results
+    ], indent=2) + "\n"
+    sys.stdout.write(payload)
+
+
+def _handle_cli_task(orchestrator: MultiSubagentOrchestrator, args: argparse.Namespace) -> None:
+    res = orchestrator.execute_task_lifecycle(
+        task_id=args.task,
+        builder_actor=args.builder,
+        supervisor_actor=args.supervisor,
+        orchestrator_actor=args.orchestrator,
+        auto_interlock_and_finish=not args.no_finish,
+        max_iterations=args.max_cycles
+    )
+    payload = json.dumps({
+        "status": res.status,
+        "task_id": res.task_id,
+        "builder": res.builder_actor,
+        "supervisor": res.supervisor_actor,
+        "iterations_run": res.iterations_run,
+        "gate_status": res.gate_status,
+        "interlock_passed": res.interlock_passed,
+        "finished": res.finished,
+        "feedback_packet": res.feedback_packet_path
+    }, indent=2) + "\n"
+    sys.stdout.write(payload)
+
+
+def main() -> None:
     parser = argparse.ArgumentParser(description="Multi-Subagent Workflow & Swarm Orchestrator v8.3")
     parser.add_argument("--task", help="Single Task ID to execute through workflow")
     parser.add_argument("--swarm", action="store_true", help="Execute all tasks in parallel swarm waves")
@@ -786,49 +801,16 @@ def main():
     args = parser.parse_args()
 
     orchestrator = MultiSubagentOrchestrator(workspace_root=Path(args.workspace) if args.workspace else None)
-
     try:
         if args.swarm:
-            swarm = ParallelSwarmOrchestrator(
-                workspace_root=orchestrator.workspace_root,
-                gov_script=orchestrator.gov_script,
-                max_concurrency=args.concurrency
-            )
-            results = swarm.execute_swarm(orchestrator=orchestrator)
-            print(json.dumps([
-                {
-                    "task_id": r.task_id,
-                    "status": r.status,
-                    "iterations": r.iterations_run,
-                    "finished": r.finished,
-                    "error": r.error
-                }
-                for r in results
-            ], indent=2))
+            _handle_cli_swarm(orchestrator, args.concurrency)
         elif args.task:
-            res = orchestrator.execute_task_lifecycle(
-                task_id=args.task,
-                builder_actor=args.builder,
-                supervisor_actor=args.supervisor,
-                orchestrator_actor=args.orchestrator,
-                auto_interlock_and_finish=not args.no_finish,
-                max_iterations=args.max_cycles
-            )
-            print(json.dumps({
-                "status": res.status,
-                "task_id": res.task_id,
-                "builder": res.builder_actor,
-                "supervisor": res.supervisor_actor,
-                "iterations_run": res.iterations_run,
-                "gate_status": res.gate_status,
-                "interlock_passed": res.interlock_passed,
-                "finished": res.finished,
-                "feedback_packet": res.feedback_packet_path
-            }, indent=2))
+            _handle_cli_task(orchestrator, args)
         else:
             parser.error("Specify either --task <TASK_ID> or --swarm")
     except Exception as e:
-        print(json.dumps({"status": "ERROR", "error": type(e).__name__, "message": str(e)}, indent=2), file=sys.stderr)
+        err_payload = json.dumps({"status": "ERROR", "error": type(e).__name__, "message": str(e)}, indent=2) + "\n"
+        sys.stderr.write(err_payload)
         sys.exit(1)
 
 
