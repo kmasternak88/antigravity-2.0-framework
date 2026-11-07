@@ -255,6 +255,9 @@ class TandemExecutionWorker:
         max_iterations: int = 3,
         run_gov_func: Optional[Callable[[List[str], Optional[Dict[str, str]]], Dict[str, Any]]] = None,
         builder_remediation_hook: Optional[Callable[[int, FeedbackPacket, Path], None]] = None,
+        builder_engine: str = "local",
+        jules_bridge: Optional[Any] = None,
+        jules_session_id: Optional[str] = None,
     ):
         self.task_id = task_id
         self.workspace_root = workspace_root.resolve()
@@ -264,6 +267,9 @@ class TandemExecutionWorker:
         self.max_iterations = max_iterations
         self._run_gov_external = run_gov_func
         self.builder_remediation_hook = builder_remediation_hook
+        self.builder_engine = builder_engine
+        self.jules_bridge = jules_bridge
+        self.jules_session_id = jules_session_id or f"sessions/{task_id}"
 
         # Dual control session separation
         self.builder_session = builder_session or f"session-builder-{uuid.uuid4().hex[:12]}"
@@ -473,6 +479,23 @@ class TandemExecutionWorker:
             if is_exhausted:
                 return False, "BLOCKED_ESCALATED", latest_evidence, feedback_path, iteration
 
+            if self.builder_engine == "jules" and self.jules_bridge:
+                try:
+                    from tools.jules_bridge import format_feedback_packet_to_prompt
+                    target_sess = self.jules_session_id or f"sessions/{self.task_id}"
+                    remed_prompt = format_feedback_packet_to_prompt(packet.to_dict())
+                    self.jules_bridge.mcp.call_tool("send_session_message", {
+                        "session_id": target_sess,
+                        "prompt": remed_prompt
+                    })
+                    # Poll completion of revision commit and fetch downstream
+                    self.jules_bridge.mcp.call_tool("wait_for_session_completion", {
+                        "session_id": target_sess
+                    })
+                    self.jules_bridge.fetch_task_branch_downstream(self.task_id)
+                except Exception as jules_err:
+                    logger.warning("Jules remediation dispatch exception at iter %d: %s", iteration, jules_err)
+
             if self.builder_remediation_hook:
                 try:
                     self.builder_remediation_hook(iteration, packet, self.workspace_root)
@@ -555,7 +578,8 @@ class ParallelSwarmOrchestrator:
         self,
         orchestrator: "MultiSubagentOrchestrator",
         wave: List[str],
-        check_name: Optional[str]
+        check_name: Optional[str],
+        executor_engine: Optional[str] = None
     ) -> List[SubagentWorkflowResult]:
         wave_results: List[SubagentWorkflowResult] = []
         with concurrent.futures.ThreadPoolExecutor(max_workers=self.max_concurrency) as executor:
@@ -567,7 +591,8 @@ class ParallelSwarmOrchestrator:
                     supervisor_actor=f"agent:task-supervisor-{tid}",
                     orchestrator_actor="agent:project-orchestrator",
                     check_name=check_name,
-                    auto_interlock_and_finish=True
+                    auto_interlock_and_finish=True,
+                    executor_engine=executor_engine
                 ): tid
                 for tid in wave
             }
@@ -588,14 +613,15 @@ class ParallelSwarmOrchestrator:
         self,
         orchestrator: "MultiSubagentOrchestrator",
         task_ids: Optional[List[str]] = None,
-        check_name: Optional[str] = None
+        check_name: Optional[str] = None,
+        executor_engine: Optional[str] = None
     ) -> List[SubagentWorkflowResult]:
         """Executes tasks grouped by waves respecting max_concurrency."""
         all_tasks = self._load_swarm_tasks(task_ids)
         waves = self.compute_execution_waves(all_tasks)
         results: List[SubagentWorkflowResult] = []
         for wave in waves:
-            results.extend(self._execute_single_wave(orchestrator, wave, check_name))
+            results.extend(self._execute_single_wave(orchestrator, wave, check_name, executor_engine=executor_engine))
         return results
 
 
@@ -695,7 +721,9 @@ class MultiSubagentOrchestrator:
         check_name: Optional[str] = None,
         auto_interlock_and_finish: bool = True,
         max_iterations: int = 3,
-        builder_remediation_hook: Optional[Callable[[int, FeedbackPacket, Path], None]] = None
+        builder_remediation_hook: Optional[Callable[[int, FeedbackPacket, Path], None]] = None,
+        executor_engine: Optional[str] = None,
+        jules_bridge: Optional[Any] = None
     ) -> SubagentWorkflowResult:
         """Executes full three-tier teamwork lifecycle for task_id."""
         sup_actor = supervisor_actor or auditor_actor or "agent:task-supervisor"
@@ -704,6 +732,43 @@ class MultiSubagentOrchestrator:
 
         self._assert_dual_control(builder_actor, sup_actor, b_session, sup_session)
         fencing_token = self._prepare_and_claim(task_id, builder_actor, b_session)
+
+        # Resolve executor engine ('local' vs 'jules')
+        engine = executor_engine or "local"
+        if not executor_engine:
+            tasks_file = self.workspace_root / ".governance" / "tasks.json"
+            if tasks_file.is_file():
+                try:
+                    with open(tasks_file, "r", encoding="utf-8") as f:
+                        tdata = json.load(f)
+                    for t in tdata.get("tasks", []):
+                        if t.get("id") == task_id and t.get("executor"):
+                            engine = t["executor"]
+                            break
+                except Exception:
+                    pass
+
+        # If Jules engine is selected, initialize bridge and dispatch initial task
+        bridge_instance = jules_bridge
+        jules_sess_id = None
+        if engine == "jules":
+            if not bridge_instance:
+                from tools.jules_bridge import JulesBridgeClient
+                bridge_instance = JulesBridgeClient(workspace_root=self.workspace_root)
+            try:
+                from tools.jules_bridge import JulesSessionRequest
+                branch = bridge_instance.push_task_branch_upstream(task_id)
+                disp_res = bridge_instance.dispatch_and_supervise_task(JulesSessionRequest(
+                    task_id=task_id,
+                    prompt=f"Implement task {task_id} according to TASK_BRIEF.md and contracts/ adhering to DREE standards.",
+                    source=bridge_instance.config.default_source or f"sources/{task_id}",
+                    starting_branch=branch,
+                    require_plan_approval=True
+                ))
+                jules_sess_id = disp_res.get("session_id")
+                bridge_instance.fetch_task_branch_downstream(task_id)
+            except Exception as j_init_err:
+                logger.warning("Jules bridge dispatch failed, falling back or escalating: %s", j_init_err)
 
         worker = TandemExecutionWorker(
             task_id=task_id,
@@ -716,7 +781,10 @@ class MultiSubagentOrchestrator:
             auditor_token=auditor_token,
             max_iterations=max_iterations,
             run_gov_func=self._run_gov,
-            builder_remediation_hook=builder_remediation_hook
+            builder_remediation_hook=builder_remediation_hook,
+            builder_engine=engine,
+            jules_bridge=bridge_instance,
+            jules_session_id=jules_sess_id
         )
         success, review_decision, ev_path, fb_path, iters = worker.run_tandem_loop(check_name=check_name)
 
@@ -744,13 +812,13 @@ class MultiSubagentOrchestrator:
         )
 
 
-def _handle_cli_swarm(orchestrator: MultiSubagentOrchestrator, concurrency: int) -> None:
+def _handle_cli_swarm(orchestrator: MultiSubagentOrchestrator, concurrency: int, executor_engine: Optional[str] = None) -> None:
     swarm = ParallelSwarmOrchestrator(
         workspace_root=orchestrator.workspace_root,
         gov_script=orchestrator.gov_script,
         max_concurrency=concurrency
     )
-    results = swarm.execute_swarm(orchestrator=orchestrator)
+    results = swarm.execute_swarm(orchestrator=orchestrator, executor_engine=executor_engine)
     payload = json.dumps([
         {
             "task_id": r.task_id,
@@ -771,7 +839,8 @@ def _handle_cli_task(orchestrator: MultiSubagentOrchestrator, args: argparse.Nam
         supervisor_actor=args.supervisor,
         orchestrator_actor=args.orchestrator,
         auto_interlock_and_finish=not args.no_finish,
-        max_iterations=args.max_cycles
+        max_iterations=args.max_cycles,
+        executor_engine=args.executor
     )
     payload = json.dumps({
         "status": res.status,
@@ -798,12 +867,13 @@ def main() -> None:
     parser.add_argument("--orchestrator", default="agent:project-orchestrator", help="Orchestrator actor name")
     parser.add_argument("--no-finish", action="store_true", help="Stop before final orchestrator finish")
     parser.add_argument("--max-cycles", type=int, default=3, help="Max self-healing cycles (default 3)")
+    parser.add_argument("--executor", choices=["local", "jules"], default="local", help="Builder execution engine (local or jules)")
     args = parser.parse_args()
 
     orchestrator = MultiSubagentOrchestrator(workspace_root=Path(args.workspace) if args.workspace else None)
     try:
         if args.swarm:
-            _handle_cli_swarm(orchestrator, args.concurrency)
+            _handle_cli_swarm(orchestrator, args.concurrency, executor_engine=args.executor)
         elif args.task:
             _handle_cli_task(orchestrator, args)
         else:

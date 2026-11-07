@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "jules": {
+      "command": "python",
+      "args": ["-m", "jules_mcp"],
+      "env": {
+        "JULES_API_KEY": "${JULES_API_KEY}"
+      }
+    }
+  }
+}

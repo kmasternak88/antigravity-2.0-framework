@@ -742,7 +742,7 @@ def gate(task):
             raise Rejected('GATE_FAILED: Independent review identity unverified (identityVerified=False)')
 
         # 2. Enforce Mock-Breaker Mutation Audit (G5.1 Gate)
-        mb_row = c.execute("SELECT * FROM test_audits WHERE task=? AND status='PASS'", (task,)).fetchone()
+        mb_row = c.execute("SELECT * FROM test_audits WHERE task=? AND status='PASS' ORDER BY at DESC", (task,)).fetchone()
         t = task_def(task)
         requires_mb = False
         standards = standards_config()
