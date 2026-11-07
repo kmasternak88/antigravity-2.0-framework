@@ -4,6 +4,9 @@ description: "Niezależny audytor kodu i testów; weryfikuje standardy DREE, mon
 mainAgent: false
 subagent: true
 model: inherit
+skills:
+  - cl-review
+  - cl-audit
 tools:
   - view_file
   - grep_search

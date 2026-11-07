@@ -4,6 +4,9 @@ description: "Weryfikuje jakość zintegrowanego kodu, przeprowadza audyt mutacy
 mainAgent: false
 subagent: true
 model: inherit
+skills:
+  - cl-verify
+  - cl-characterize
 tools:
   - view_file
   - grep_search
