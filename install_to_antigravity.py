@@ -2435,7 +2435,7 @@ def run():
 
 
 
-    (root / "VERSION").write_text("8.1.0\n", encoding="utf-8")
+    (root / "VERSION").write_text("8.2.0\n", encoding="utf-8")
 
 
 
