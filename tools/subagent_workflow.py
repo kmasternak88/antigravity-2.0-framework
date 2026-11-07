@@ -53,7 +53,7 @@ class SubagentRole:
     allowed_tools: List[str]
 
 
-@dataclass
+@dataclass(slots=True, frozen=True)
 class SubagentWorkflowResult:
     task_id: str
     status: str
@@ -69,6 +69,12 @@ class SubagentWorkflowResult:
     finished: bool = False
     evidence_path: Optional[str] = None
     error: Optional[str] = None
+
+    def __post_init__(self):
+        if not self.task_id or not isinstance(self.task_id, str):
+            raise ValueError("SubagentWorkflowResult.task_id must be a non-empty string")
+        if not self.status or not isinstance(self.status, str):
+            raise ValueError("SubagentWorkflowResult.status must be a non-empty string")
 
 
 class MultiSubagentOrchestrator:

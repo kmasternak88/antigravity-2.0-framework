@@ -26,6 +26,8 @@ class TestDeepDiscoveryEngine(unittest.TestCase):
 
     def test_schema_validator_success_and_failures(self):
         schema_file = Path("specs/blueprints/system.blueprint.schema.json")
+        if not schema_file.is_file():
+            schema_file = Path(__file__).resolve().parents[1] / "specs/blueprints/system.blueprint.schema.json"
         self.assertTrue(schema_file.is_file(), "Schema file must exist in repo")
         schema = json.loads(schema_file.read_text(encoding="utf-8"))
 

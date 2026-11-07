@@ -367,8 +367,12 @@ def validate():
         for bp_f in bp_dir.glob('*.blueprint.json'):
             try:
                 b_doc = json.loads(bp_f.read_text(encoding='utf-8'))
-                if not b_doc.get('pageId') or not b_doc.get('targetFile') or not b_doc.get('slots'):
-                    raise Rejected(f"Invalid blueprint contract: {bp_f.name}")
+                if bp_f.name == 'system.blueprint.json' or 'metadata' in b_doc:
+                    if not b_doc.get('metadata') or not b_doc.get('competitive_advantages'):
+                        raise Rejected(f"Invalid system blueprint contract: {bp_f.name}")
+                else:
+                    if not b_doc.get('pageId') or not b_doc.get('targetFile') or not b_doc.get('slots'):
+                        raise Rejected(f"Invalid blueprint contract: {bp_f.name}")
             except Exception as e:
                 raise Rejected(f"Malformed blueprint {bp_f.name}: {e}")
     spec_hash()
