@@ -3145,7 +3145,7 @@ def run():
 
 
 
-    zip_dest_v82 = root.parent / "Antigravity_Closed_Loop_Framework_v8.2.zip"
+    zip_dest_v82 = root.parent / "Antigravity_Closed_Loop_Framework_v8.3.zip"
     print(f"\nGenerowanie archiwum dystrybucyjnego: {zip_dest_v82.name} ... ", end="")
     with zipfile.ZipFile(zip_dest_v82, 'w', zipfile.ZIP_DEFLATED) as zf:
         for file in root.rglob('*'):
@@ -3159,7 +3159,7 @@ def run():
 
 
 
-    print("   INSTALACJA GLOBALNA FRAMEWORKA V8.1 ZAKOŃCZONA SUKCESEM!  ")
+    print("   INSTALACJA GLOBALNA FRAMEWORKA V8.3 ZAKOŃCZONA SUKCESEM!  ")
 
 
 
