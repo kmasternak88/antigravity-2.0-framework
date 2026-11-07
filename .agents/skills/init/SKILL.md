@@ -2,13 +2,13 @@
 
 name: init
 
-description: "Inicjalizacja i orkiestracja projektu w Antigravity Closed Loop Framework v8.1. Blyskawicznie wykrywa stan repozytorium (Greenfield / Brownfield / In-Flight), egzekwuje Multi-Workspace Isolation i prowadzi przez cykl dowodowy G0-G7."
+description: "Inicjalizacja i orkiestracja projektu w Antigravity Closed Loop Framework v8.3. Blyskawicznie wykrywa stan repozytorium (Greenfield / Brownfield / In-Flight), egzekwuje Multi-Workspace Isolation i prowadzi przez cykl dowodowy G0-G7."
 
 ---
 
 
 
-# /init — Antigravity Evidence-Driven Closed Loop v8.0 Orchestrator
+# /init — Antigravity Evidence-Driven Closed Loop v8.3 Orchestrator
 
 
 

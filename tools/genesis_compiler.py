@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Genesis Blueprint Compiler & Validator for Antigravity Closed Loop Framework v8.1.
+"""Genesis Blueprint Compiler & Validator for Antigravity Closed Loop Framework v8.3.
 
 Compiles Master Implementation Blueprints (Phases 1-7) into deterministic
 Living Charter files in specs/, baseline contracts in contracts/, and an acyclic topological

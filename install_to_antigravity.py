@@ -2,7 +2,7 @@
 
 
 
-"""Cross-platform automated global installer for Antigravity Closed Loop Ultra Omni-Agentic Framework v8.2 (Hardened Evidence, Multi-Workspace Isolation & FileStatCache)."""
+"""Cross-platform automated global installer for Antigravity Closed Loop Ultra Omni-Agentic Framework v8.3 (Hardened Evidence, Multi-Workspace Isolation & FileStatCache)."""
 
 
 
@@ -162,7 +162,7 @@ $ARGUMENTS
 
 
 
-        "description": "Inicjalizacja i orkiestracja projektu w Closed Loop Framework v8.2 (S0-S3, Multi-Workspace, Living Charter, DAG, Spec Lock)",
+        "description": "Inicjalizacja i orkiestracja projektu w Closed Loop Framework v8.3 (S0-S3, Multi-Workspace, Living Charter, DAG, Spec Lock)",
 
 
 
@@ -174,7 +174,7 @@ name: init
 
 
 
-description: Inicjalizacja i orkiestracja projektu w Closed Loop Framework v8.2 (S0-S3, Multi-Workspace, Living Charter, DAG, Spec Lock)
+description: Inicjalizacja i orkiestracja projektu w Closed Loop Framework v8.3 (S0-S3, Multi-Workspace, Living Charter, DAG, Spec Lock)
 
 
 
@@ -202,7 +202,7 @@ artifact_outputs: living-charter
 
 
 
-# /init — Closed Loop Framework v8.2 Inception & Multi-Workspace Orchestrator
+# /init — Closed Loop Framework v8.3 Inception & Multi-Workspace Orchestrator
 
 
 
@@ -2403,7 +2403,7 @@ def run():
 
 
 
-    print("   Antigravity Closed Loop Ultra Framework v8.2 — Global Master Installer   ")
+    print("   Antigravity Closed Loop Ultra Framework v8.3 — Global Master Installer   ")
 
 
 

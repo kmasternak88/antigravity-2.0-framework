@@ -1,9 +1,9 @@
 ---
 name: init
-description: "Inicjalizacja i orkiestracja projektu w Antigravity Closed Loop Framework v8.1. Blyskawicznie wykrywa stan repozytorium (Greenfield / Brownfield / In-Flight), egzekwuje Multi-Workspace Isolation i prowadzi przez cykl dowodowy G0-G7."
+description: "Inicjalizacja i orkiestracja projektu w Antigravity Closed Loop Framework v8.3. Blyskawicznie wykrywa stan repozytorium (Greenfield / Brownfield / In-Flight), egzekwuje Multi-Workspace Isolation i prowadzi przez cykl dowodowy G0-G7."
 ---
 
-# /init — Antigravity Evidence-Driven Closed Loop 3.0 Orchestrator
+# /init — Antigravity Evidence-Driven Closed Loop v8.3 Orchestrator
 
 Komenda `/init` to nadrzędny punkt wejścia dla agenta i dewelopera w ekosystemie **Antigravity 2.0**. Daje agentowi natychmiastową wiedzę operacyjną o silniku bramek dowodowych, automatycznie bada stan dojrzałości projektu i dostosowuje dalsze kroki do aktualnego etapu.
 
