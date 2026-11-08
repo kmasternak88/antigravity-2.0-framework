@@ -61,6 +61,22 @@ g = importlib.util.module_from_spec(s)
 s.loader.exec_module(g)
 
 
+def _extract_reqs(prd_path: Path) -> List[str]:
+    if not prd_path.exists():
+        return []
+    content = prd_path.read_text(encoding="utf-8")
+    return list(set(re.findall(r'(REQ-\d{3})', content)))
+
+
+def _check_single_req(req: str, spec_text: str, test_contents: List[str]) -> Optional[str]:
+    if req not in spec_text:
+        return f"UNCOVERED_PRD_REQUIREMENTS: {req} missing in specs."
+    for tc in test_contents:
+        if f'@test_req("{req}")' in tc or req in tc:
+            return None
+    return f"UNCOVERED_PRD_REQUIREMENTS: {req} missing in tests."
+
+
 def verify_prd_traceability(
     prd_path: Optional[Path] = None,
     specs_dir: Optional[Path] = None,
@@ -71,43 +87,18 @@ def verify_prd_traceability(
     specs_dir = specs_dir or ROOT / "specs"
     tests_dir = tests_dir or ROOT / "tests"
 
-    if not prd_path.exists():
+    reqs = _extract_reqs(prd_path)
+    if not reqs:
         return True, []
 
-    content = prd_path.read_text(encoding="utf-8")
-    reqs = re.findall(r'(REQ-\d{3})', content)
-    reqs = list(set(reqs))
+    m_f = specs_dir / "05_TRACEABILITY_MATRIX.md"
+    r_f = specs_dir / "01_PRODUCT_REQUIREMENTS.md"
+    spec_text = (m_f.read_text("utf-8") if m_f.exists() else "") + (r_f.read_text("utf-8") if r_f.exists() else "")
 
-    matrix_path = specs_dir / "05_TRACEABILITY_MATRIX.md"
-    reqs_spec_path = specs_dir / "01_PRODUCT_REQUIREMENTS.md"
+    test_contents = [f.read_text("utf-8") for f in tests_dir.rglob("*.py")]
+    missing = [err for req in reqs if (err := _check_single_req(req, spec_text, test_contents))]
 
-    matrix_content = matrix_path.read_text(encoding="utf-8") if matrix_path.exists() else ""
-    reqs_spec_content = reqs_spec_path.read_text(encoding="utf-8") if reqs_spec_path.exists() else ""
-
-    missing = []
-
-    test_files = list(tests_dir.rglob("*.py"))
-    test_contents = [f.read_text(encoding="utf-8") for f in test_files]
-
-    for req in reqs:
-        # Check in specs
-        if req not in matrix_content and req not in reqs_spec_content:
-            missing.append(f"UNCOVERED_PRD_REQUIREMENTS: {req} missing in specs.")
-            continue
-
-        # Check in tests
-        found_in_tests = False
-        for tc in test_contents:
-            if f'@test_req("{req}")' in tc or req in tc:
-                found_in_tests = True
-                break
-
-        if not found_in_tests:
-             missing.append(f"UNCOVERED_PRD_REQUIREMENTS: {req} missing in tests.")
-
-    if missing:
-        return False, missing
-    return True, []
+    return (len(missing) == 0, missing)
 
 
 def main():
