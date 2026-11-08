@@ -454,6 +454,15 @@ class TandemExecutionWorker:
             required_action=action_msg
         )
         packet.save_to_file(feedback_path)
+        try:
+            from tools.immunization_engine import ImmunizationEngine
+            rules = ImmunizationEngine.distill_from_packet(packet.to_dict(), project_id=self.task_id)
+            state_p = self.workspace_root / ".governance" / "state" / "immunization.json"
+            existing = ImmunizationEngine.load_rules(state_p)
+            merged = {r.rule_id: r for r in (existing + rules)}.values()
+            ImmunizationEngine.save_rules(list(merged), state_p, project_id=self.task_id)
+        except Exception:
+            pass
         self._persist_iteration(iteration, packet_status, findings)
         self._persist_supervision_log(iteration, packet_status, str(feedback_path))
         return is_exhausted, packet
