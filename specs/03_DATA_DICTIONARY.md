@@ -85,3 +85,16 @@
 | StrategicParameter | class | tools/prd_parser.py |
 | TelemetryEvent | class | tools/prd_parser.py |
 | UserFlow | class | tools/prd_parser.py |
+| ContractGenerationError | class | tools/contract_generator.py |
+| SchemaParseError | class | tools/contract_generator.py |
+| FieldDefinition | class | tools/contract_generator.py |
+| EntityDefinition | class | tools/contract_generator.py |
+| GeneratedContract | class | tools/contract_generator.py |
+| ContractGenerationResult | class | tools/contract_generator.py |
+| ContractGenerator | class | tools/contract_generator.py |
+| ImmunizationError | class | tools/immunization_engine.py |
+| InvalidFeedbackPacketError | class | tools/immunization_engine.py |
+| ImmunizationRule | class | tools/immunization_engine.py |
+| ImmunizationState | class | tools/immunization_engine.py |
+| ImmunizationResult | class | tools/immunization_engine.py |
+| ImmunizationEngine | class | tools/immunization_engine.py |

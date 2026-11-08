@@ -1041,7 +1041,18 @@ def scaffold_contracts(from_spec=None, out_dir=None):
     """Pure Python stdlib generator for TypeScript, Python and OpenAPI contract interfaces."""
     out = ROOT / (out_dir or 'contracts')
     out.mkdir(parents=True, exist_ok=True)
-    
+
+    prd_candidate = ROOT / 'specs/00_PRD.md'
+    if prd_candidate.is_file():
+        try:
+            if str(ROOT) not in sys.path:
+                sys.path.insert(0, str(ROOT))
+            from tools.contract_generator import ContractGenerator
+            gen_res = ContractGenerator.generate_contracts(prd_candidate, out)
+            return {'status': 'SCAFFOLDED', 'contractsDir': str(out.relative_to(ROOT)), 'files': list(gen_res.generated_files), 'entities': gen_res.entities_count}
+        except Exception:
+            pass
+
     inv = json.loads((ROOT / '.governance/inventory.json').read_text(encoding='utf-8')) if (ROOT / '.governance/inventory.json').is_file() else {'models': [], 'routes': []}
     
     models = inv.get('models', [])
