@@ -624,6 +624,11 @@ def compile_blueprint(blueprint_path: Path, workspace_root: Path = None) -> Dict
     gov_dir.mkdir(parents=True, exist_ok=True)
     
     tasks_json_path = gov_dir / "tasks.json"
+    try:
+        from tools.anticipatory_expander import AnticipatoryExpander
+        tasks = AnticipatoryExpander.enrich_tasks_with_skills_and_tools(tasks)
+    except Exception:
+        pass
     tasks_payload = {
         "version": 2,
         "blueprint_source": "specs/00_MASTER_BLUEPRINT.md",
