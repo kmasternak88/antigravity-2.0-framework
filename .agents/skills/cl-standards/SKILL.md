@@ -1,6 +1,6 @@
 ---
 name: cl-standards
-description: "Design Rule & Architectural Invariant Enforcement Engine (DREE v8.0). Wymusza standard 7 niezmienników kompletnej funkcji, generuje wzorce scaffold-unit i przeprowadza statyczny audyt AST diffs."
+description: "Design Rule & Architectural Invariant Enforcement Engine (DREE v8.3). Wymusza standard 7 niezmienników kompletnej funkcji, generuje wzorce scaffold-unit i przeprowadza statyczny audyt AST diffs."
 version: 5.1.0
 ---
 

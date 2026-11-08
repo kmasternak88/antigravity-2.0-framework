@@ -1,6 +1,6 @@
 ---
 name: cl-page
-description: "CADRE v8.0 Page & Template Assembly Engine. Deterministyczny montaż szablonów stron dla WordPress/WooCommerce PHP, React TSX, Vue SFC oraz HTML. Eliminuje halucynacje ścieżek, wstrzykuje sloty i wymusza taksonomię klas CSS."
+description: "CADRE v8.3 Page & Template Assembly Engine. Deterministyczny montaż szablonów stron dla WordPress/WooCommerce PHP, React TSX, Vue SFC oraz HTML. Eliminuje halucynacje ścieżek, wstrzykuje sloty i wymusza taksonomię klas CSS."
 version: 8.0.0
 ---
 
@@ -82,7 +82,7 @@ Sprawdź, czy w `specs/blueprints/` istnieje kontrakt strony (np. `specs/bluepri
 ---
 
 ### Krok 2: Deterministyczny Scaffolding Strony (AOT)
-Zamiast ręcznie pisać pliki szablonów, uruchom generator CADRE v8.0.
+Zamiast ręcznie pisać pliki szablonów, uruchom generator CADRE v8.3.
 Silnik akceptuje argument pozycyjny lub nazwany `--blueprint`, a także bezpośrednią ścieżkę do pliku:
 
 ```powershell
@@ -130,7 +130,7 @@ Wymagania bramkowe Bramki G4:
 
 ---
 
-## 📋 REGUŁY ARCHITEKTONICZNE CADRE v8.0
+## 📋 REGUŁY ARCHITEKTONICZNE CADRE v8.3
 
 1. **Szablon Strony to Wyłącznie Orkiestrator:** Strona nie zawiera logiki biznesowej ani surowych zapytań SQL/API — montuje jedynie sloty z komponentami podrzędnymi.
 2. **Adapter-Aware Scaffolding:** Dobieraj adapter (`woocommerce`, `php`, `react-typescript`, `vue`) odpowiadający architekturze Twojego projektu.

@@ -1,0 +1,33 @@
+{
+  "deployment_manifest": {
+    "version": "1.0",
+    "target_environment": "production",
+    "cloud_provider": "google_cloud_run",
+    "service_name": "antigravity-api-core",
+    "deployment_strategy": "zero_downtime_rolling",
+    "security": {
+      "secret_shield_enabled": true,
+      "protected_configs": [
+        "configs/prod.env",
+        "contracts/db_schema.json"
+      ]
+    },
+    "plan_requirements": {
+      "require_rollback_procedure": true,
+      "require_smoke_tests": true,
+      "require_zero_downtime": true
+    },
+    "evidence_matrix": [
+      {
+        "type": "smoke_test",
+        "command": "curl -s -f https://api.prod.example.com/health || exit 1",
+        "expected_status": 200
+      },
+      {
+        "type": "schema_migration",
+        "command": "npm run db:migrate:status",
+        "expected_output_match": "up-to-date"
+      }
+    ]
+  }
+}

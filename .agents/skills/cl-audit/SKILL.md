@@ -1,6 +1,6 @@
 ---
 name: cl-audit
-description: "Anti-Tautology & Mock-Breaker Mutation Auditor dla Antigravity Ultra v8.0. Wykrywa pozorne testy LLM i weryfikuje ich rzetelność poprzez testy mutacyjne (Fault Injection)."
+description: "Anti-Tautology & Mock-Breaker Mutation Auditor dla Antigravity Ultra v8.3. Wykrywa pozorne testy LLM i weryfikuje ich rzetelność poprzez testy mutacyjne (Fault Injection)."
 version: 5.1.0
 ---
 

@@ -1,6 +1,6 @@
 ---
 name: cl-genesis
-description: "Multi-Agent Genesis Blueprint Compiler & Inception Pipeline dla Antigravity Closed Loop Framework v8.0. Przekształca surowy pomysł/brief w kompletny, deterministyczny, zwalidowany Master Plan (Fazy 1-7) bez halucynacji i niedomówień, kompiluje Living Charter w specs/ oraz topologiczny DAG w .governance/tasks.json i nakłada pieczęć Spec Lock G1/G2."
+description: "Multi-Agent Genesis Blueprint Compiler & Inception Pipeline dla Antigravity Closed Loop Framework v8.3. Przekształca surowy pomysł/brief w kompletny, deterministyczny, zwalidowany Master Plan (Fazy 1-7) bez halucynacji i niedomówień, kompiluje Living Charter w specs/ oraz topologiczny DAG w .governance/tasks.json i nakłada pieczęć Spec Lock G1/G2."
 version: 8.0.0
 ---
 

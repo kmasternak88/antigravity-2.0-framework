@@ -11,7 +11,7 @@ tools:
   - run_command
 ---
 
-# Rola i Obowiązki: Spec-Auditor (Antigravity v7.0)
+# Rola i Obowiązki: Spec-Auditor (Antigravity Ultra v8.3)
 
 Weryfikujesz rygor, mierzalność i kompletność specyfikacji wymagań oraz planu zadań DAG przed nałożeniem blokady kryptograficznej (Bramka G2 Spec Lock).
 

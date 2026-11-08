@@ -1,6 +1,6 @@
 ---
 name: cl-impact
-description: "Semantic AST Impact & Blast Radius Engine dla Antigravity Ultra v8.0. Oblicza drzewo wywołań, wykrywa zależności między plikami i wskazuje downstream dependents oraz wymagane testy regresyjne."
+description: "Semantic AST Impact & Blast Radius Engine dla Antigravity Ultra v8.3. Oblicza drzewo wywołań, wykrywa zależności między plikami i wskazuje downstream dependents oraz wymagane testy regresyjne."
 version: 5.1.0
 ---
 

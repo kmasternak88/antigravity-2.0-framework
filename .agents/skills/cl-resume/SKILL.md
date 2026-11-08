@@ -6,7 +6,7 @@ version: 5.1.0
 
 # /cl-resume — Context Recovery, Worktree Reconciliation & Lease Takeover
 
-Protokół bezpiecznego wznawiania pracy po awarii agenta, restarcie sesji czatu lub utracie kontekstu w środowisku Antigravity Ultra v8.0.
+Protokół bezpiecznego wznawiania pracy po awarii agenta, restarcie sesji czatu lub utracie kontekstu w środowisku Antigravity Ultra v8.3.
 
 ## Procedura Odzyskiwania Stanu
 

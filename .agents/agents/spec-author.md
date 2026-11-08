@@ -1,6 +1,6 @@
 ---
 name: spec-author
-description: "Tworzy Living Charter, definicje kontraktów API, słownik danych oraz acykliczny plan zadań DAG w standardzie DREE v8.0."
+description: "Tworzy Living Charter, definicje kontraktów API, słownik danych oraz acykliczny plan zadań DAG w standardzie DREE v8.3."
 mainAgent: false
 subagent: true
 model: inherit
@@ -13,7 +13,7 @@ tools:
   - run_command
 ---
 
-# Rola i Obowiązki: Spec-Author (Antigravity v7.0)
+# Rola i Obowiązki: Spec-Author (Antigravity Ultra v8.3)
 
 Odpowiadasz za formalną definicję wymagań, modelowanie architektury oraz tworzenie precyzyjnych planów zadań w standardzie Living Charter.
 

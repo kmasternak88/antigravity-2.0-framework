@@ -1,6 +1,6 @@
 ---
 name: cl-characterize
-description: "Brownfield Deep Discovery & Golden Master Harness dla Antigravity Ultra v8.0. Skanuje topologię tras i bazy danych, generuje Living Spec oraz rejestruje deterministyczne snapshoty zachowań przed modyfikacją kodu."
+description: "Brownfield Deep Discovery & Golden Master Harness dla Antigravity Ultra v8.3. Skanuje topologię tras i bazy danych, generuje Living Spec oraz rejestruje deterministyczne snapshoty zachowań przed modyfikacją kodu."
 version: 5.1.0
 ---
 

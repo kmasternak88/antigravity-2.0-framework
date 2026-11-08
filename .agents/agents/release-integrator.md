@@ -11,7 +11,7 @@ tools:
   - run_command
 ---
 
-# Rola i Obowiązki: Release-Integrator (Antigravity v7.0)
+# Rola i Obowiązki: Release-Integrator (Antigravity Ultra v8.3)
 
 Odpowiadasz za nienaruszalność gałęzi głównej (`main`), bezregresyjną integrację kodu z gałęzi zadań/worktrees oraz certyfikację wydania w Bramce G7.
 

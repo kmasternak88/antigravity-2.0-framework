@@ -22,7 +22,7 @@ COMMANDS_MAP = {
 
 
 
-        "description": "Multi-Agent Genesis Blueprint Compiler: zamiana surowego pomysłu w deterministyczny Master Blueprint (Fazy 1-7), living charter specs/ i acykliczny DAG v8.0",
+        "description": "Multi-Agent Genesis Blueprint Compiler: zamiana surowego pomysłu w deterministyczny Master Blueprint (Fazy 1-7), living charter specs/ i acykliczny DAG v8.3",
 
 
 
@@ -34,7 +34,7 @@ name: cl-genesis
 
 
 
-description: Multi-Agent Genesis Blueprint Compiler: zamiana surowego pomysłu w deterministyczny Master Blueprint (Fazy 1-7), living charter specs/ i acykliczny DAG v8.0
+description: Multi-Agent Genesis Blueprint Compiler: zamiana surowego pomysłu w deterministyczny Master Blueprint (Fazy 1-7), living charter specs/ i acykliczny DAG v8.3
 
 
 
@@ -62,7 +62,7 @@ artifact_outputs: master-blueprint
 
 
 
-# /cl-genesis — Multi-Agent Genesis Blueprint Compiler v8.0
+# /cl-genesis — Multi-Agent Genesis Blueprint Compiler v8.3
 
 
 
@@ -362,7 +362,7 @@ $ARGUMENTS
 
 
 
-        "description": "Weryfikacja 7 Niezmiennikow DREE v8.0 i synchronizacji ze Slownikiem Danych specs/03_DATA_DICTIONARY.md",
+        "description": "Weryfikacja 7 Niezmiennikow DREE v8.3 i synchronizacji ze Slownikiem Danych specs/03_DATA_DICTIONARY.md",
 
 
 
@@ -374,7 +374,7 @@ name: cl-standards
 
 
 
-description: Weryfikacja 7 Niezmiennikow DREE v8.0 i synchronizacji ze Slownikiem Danych specs/03_DATA_DICTIONARY.md
+description: Weryfikacja 7 Niezmiennikow DREE v8.3 i synchronizacji ze Slownikiem Danych specs/03_DATA_DICTIONARY.md
 
 
 
@@ -398,7 +398,7 @@ artifact_outputs: standards-audit
 
 
 
-# /cl-standards — Weryfikacja Standardu 7 Niezmiennikow DREE v8.0
+# /cl-standards — Weryfikacja Standardu 7 Niezmiennikow DREE v8.3
 
 
 
@@ -458,7 +458,7 @@ python .governance/bin/gov.py check-standards
 
 
 
-        "description": "Testy mutacyjne Mock-Breaker (mutations_caught >= 1) i audyt pozornych asercji v8.0",
+        "description": "Testy mutacyjne Mock-Breaker (mutations_caught >= 1) i audyt pozornych asercji v8.3",
 
 
 
@@ -470,7 +470,7 @@ name: cl-audit
 
 
 
-description: Testy mutacyjne Mock-Breaker (mutations_caught >= 1) i audyt pozornych asercji v8.0
+description: Testy mutacyjne Mock-Breaker (mutations_caught >= 1) i audyt pozornych asercji v8.3
 
 
 
@@ -498,7 +498,7 @@ artifact_outputs: mockbreaker-audit
 
 
 
-# /cl-audit — Audyt Mutacyjny Mock-Breaker v8.0
+# /cl-audit — Audyt Mutacyjny Mock-Breaker v8.3
 
 
 
@@ -554,7 +554,7 @@ python .governance/bin/gov.py audit-tests
 
 
 
-        "description": "Weryfikacja kompletu dowodow bramki G5 i wydanie nienaruszalnego certyfikatu GATE_PASS v8.0",
+        "description": "Weryfikacja kompletu dowodow bramki G5 i wydanie nienaruszalnego certyfikatu GATE_PASS v8.3",
 
 
 
@@ -566,7 +566,7 @@ name: cl-gate
 
 
 
-description: Weryfikacja kompletu dowodow bramki G5 i wydanie nienaruszalnego certyfikatu GATE_PASS v8.0
+description: Weryfikacja kompletu dowodow bramki G5 i wydanie nienaruszalnego certyfikatu GATE_PASS v8.3
 
 
 
@@ -594,7 +594,7 @@ artifact_outputs: gate-certificate
 
 
 
-# /cl-gate — Weryfikacja Dowodow Bramki G5 v8.0
+# /cl-gate — Weryfikacja Dowodow Bramki G5 v8.3
 
 
 
@@ -634,7 +634,7 @@ python .governance/bin/gov.py gate <TASK_ID>
 
 
 
-        "description": "Wydanie operacyjne G7, weryfikacja regresyjna i nienaruszalny manifest wydania v8.0",
+        "description": "Wydanie operacyjne G7, weryfikacja regresyjna i nienaruszalny manifest wydania v8.3",
 
 
 
@@ -646,7 +646,7 @@ name: cl-release
 
 
 
-description: Wydanie operacyjne G7, weryfikacja regresyjna i nienaruszalny manifest wydania v8.0
+description: Wydanie operacyjne G7, weryfikacja regresyjna i nienaruszalny manifest wydania v8.3
 
 
 
@@ -674,7 +674,7 @@ artifact_outputs: release-manifest
 
 
 
-# /cl-release — Finalne Wydanie Operacyjne Bramki G7 v8.0
+# /cl-release — Finalne Wydanie Operacyjne Bramki G7 v8.3
 
 
 
@@ -714,7 +714,7 @@ python .governance/bin/gov.py release
 
 
 
-        "description": "Implementacja zadania w izolowanym Git Worktree ze scaffoldingiem 7 Niezmiennikow DREE v8.0",
+        "description": "Implementacja zadania w izolowanym Git Worktree ze scaffoldingiem 7 Niezmiennikow DREE v8.3",
 
 
 
@@ -726,7 +726,7 @@ name: cl-build
 
 
 
-description: Implementacja zadania w izolowanym Git Worktree ze scaffoldingiem 7 Niezmiennikow DREE v8.0
+description: Implementacja zadania w izolowanym Git Worktree ze scaffoldingiem 7 Niezmiennikow DREE v8.3
 
 
 
@@ -750,7 +750,7 @@ requires_skills: cl-build, cl-standards
 
 
 
-# /cl-build — Egzekucja Zadania w Izolacji Worktree v8.0
+# /cl-build — Egzekucja Zadania w Izolacji Worktree v8.3
 
 
 
@@ -794,7 +794,7 @@ python .governance/bin/gov.py package-handoff <TASK_ID>
 
 
 
-        "description": "Niezalezna inspekcja dowodowa, testy mutacyjne i asercja Golden Record v8.0",
+        "description": "Niezalezna inspekcja dowodowa, testy mutacyjne i asercja Golden Record v8.3",
 
 
 
@@ -806,7 +806,7 @@ name: cl-review
 
 
 
-description: Niezalezna inspekcja dowodowa, testy mutacyjne i asercja Golden Record v8.0
+description: Niezalezna inspekcja dowodowa, testy mutacyjne i asercja Golden Record v8.3
 
 
 
@@ -830,7 +830,7 @@ requires_skills: cl-review, cl-audit
 
 
 
-# /cl-review — Niezalezny Przeglad Dowodowy (Bramka G5) v8.0
+# /cl-review — Niezalezny Przeglad Dowodowy (Bramka G5) v8.3
 
 
 
@@ -854,7 +854,7 @@ $ARGUMENTS
 
 
 
-        "description": "Gleboka rekonstrukcja specyfikacji i topologii w projektach brownfield (S1) v8.0",
+        "description": "Gleboka rekonstrukcja specyfikacji i topologii w projektach brownfield (S1) v8.3",
 
 
 
@@ -866,7 +866,7 @@ name: cl-discover
 
 
 
-description: Gleboka rekonstrukcja specyfikacji i topologii w projektach brownfield (S1) v8.0
+description: Gleboka rekonstrukcja specyfikacji i topologii w projektach brownfield (S1) v8.3
 
 
 
@@ -890,7 +890,7 @@ requires_skills: cl-discover
 
 
 
-# /cl-discover — Gleboka Rekonstrukcja Specyfikacji (S1) v8.0
+# /cl-discover — Gleboka Rekonstrukcja Specyfikacji (S1) v8.3
 
 
 
@@ -922,7 +922,7 @@ python .governance/bin/gov.py discover --deep
 
 
 
-        "description": "Analiza wstepna, wybor profilu i scaffolding Living Charter v8.0",
+        "description": "Analiza wstepna, wybor profilu i scaffolding Living Charter v8.3",
 
 
 
@@ -934,7 +934,7 @@ name: cl-inception
 
 
 
-description: Analiza wstepna, wybor profilu i scaffolding Living Charter v8.0
+description: Analiza wstepna, wybor profilu i scaffolding Living Charter v8.3
 
 
 
@@ -958,7 +958,7 @@ requires_skills: cl-inception
 
 
 
-# /cl-inception — Incepcja Projektu S0/S1 v8.0
+# /cl-inception — Incepcja Projektu S0/S1 v8.3
 
 
 
@@ -974,7 +974,7 @@ requires_skills: cl-inception
 
 
 
-        "description": "Analiza blast-radius i symulacja kaskady uniewaznien kontraktow v8.0",
+        "description": "Analiza blast-radius i symulacja kaskady uniewaznien kontraktow v8.3",
 
 
 
@@ -986,7 +986,7 @@ name: cl-impact
 
 
 
-description: Analiza blast-radius i symulacja kaskady uniewaznien kontraktow v8.0
+description: Analiza blast-radius i symulacja kaskady uniewaznien kontraktow v8.3
 
 
 
@@ -1006,7 +1006,7 @@ requires_skills: cl-spec-audit, cl-impact
 
 
 
-# /cl-impact — Analiza Blast-Radius v8.0
+# /cl-impact — Analiza Blast-Radius v8.3
 
 
 
@@ -1022,7 +1022,7 @@ requires_skills: cl-spec-audit, cl-impact
 
 
 
-        "description": "CADRE v8.0 Multi-Adapter Page & Template Assembly Engine (WordPress/WooCommerce PHP, React TSX, Vue SFC, HTML)",
+        "description": "CADRE v8.3 Multi-Adapter Page & Template Assembly Engine (WordPress/WooCommerce PHP, React TSX, Vue SFC, HTML)",
 
 
 
@@ -1034,7 +1034,7 @@ name: cl-page
 
 
 
-description: CADRE v8.0 Multi-Adapter Page & Template Assembly Engine (WordPress/WooCommerce PHP, React TSX, Vue SFC, HTML)
+description: CADRE v8.3 Multi-Adapter Page & Template Assembly Engine (WordPress/WooCommerce PHP, React TSX, Vue SFC, HTML)
 
 
 
@@ -1058,7 +1058,7 @@ requires_skills: cl-page, cl-standards
 
 
 
-# /cl-page — CADRE Multi-Adapter Page & Template Assembly Engine (v8.0)
+# /cl-page — CADRE Multi-Adapter Page & Template Assembly Engine (v8.3)
 
 
 
@@ -1082,7 +1082,7 @@ $ARGUMENTS
 
 
 
-        "description": "Kodyfikacja wiedzy z sesji (G-LEARN v8.0): destylacja, kwarantanna learning_inbox, integracja Mem0",
+        "description": "Kodyfikacja wiedzy z sesji (G-LEARN v8.3): destylacja, kwarantanna learning_inbox, integracja Mem0",
 
 
 
@@ -1094,7 +1094,7 @@ name: cl-learn
 
 
 
-description: Kodyfikacja wiedzy z sesji (G-LEARN v8.0): destylacja, kwarantanna learning_inbox, integracja Mem0
+description: Kodyfikacja wiedzy z sesji (G-LEARN v8.3): destylacja, kwarantanna learning_inbox, integracja Mem0
 
 
 
@@ -1114,7 +1114,7 @@ requires_skills: cl-learn
 
 
 
-# /cl-learn — Kodyfikacja Wiedzy i Standardow v8.0
+# /cl-learn — Kodyfikacja Wiedzy i Standardow v8.3
 
 
 
@@ -1138,7 +1138,7 @@ $ARGUMENTS
 
 
 
-        "description": "Weryfikacja scalonego kandydata release, testy wielopoziomowe i Macierz SSoT v8.0",
+        "description": "Weryfikacja scalonego kandydata release, testy wielopoziomowe i Macierz SSoT v8.3",
 
 
 
@@ -1150,7 +1150,7 @@ name: cl-verify
 
 
 
-description: Weryfikacja scalonego kandydata release, testy wielopoziomowe i Macierz SSoT v8.0
+description: Weryfikacja scalonego kandydata release, testy wielopoziomowe i Macierz SSoT v8.3
 
 
 
@@ -1174,7 +1174,7 @@ requires_skills: cl-verify
 
 
 
-# /cl-verify — Weryfikacja Scalonego Kandydata (Bramka G6) v8.0
+# /cl-verify — Weryfikacja Scalonego Kandydata (Bramka G6) v8.3
 
 
 
@@ -1198,7 +1198,7 @@ $ARGUMENTS
 
 
 
-        "description": "Niezalezny audyt specyfikacji, grafu DAG i kontraktow przed blokada Spec Lock v8.0",
+        "description": "Niezalezny audyt specyfikacji, grafu DAG i kontraktow przed blokada Spec Lock v8.3",
 
 
 
@@ -1210,7 +1210,7 @@ name: cl-spec-audit
 
 
 
-description: Niezalezny audyt specyfikacji, grafu DAG i kontraktow przed blokada Spec Lock v8.0
+description: Niezalezny audyt specyfikacji, grafu DAG i kontraktow przed blokada Spec Lock v8.3
 
 
 
@@ -1234,7 +1234,7 @@ requires_skills: cl-spec-audit
 
 
 
-# /cl-spec-audit — Niezalezny Audyt Kontraktow (Bramka G1/G2) v8.0
+# /cl-spec-audit — Niezalezny Audyt Kontraktow (Bramka G1/G2) v8.3
 
 
 
@@ -1258,7 +1258,7 @@ $ARGUMENTS
 
 
 
-        "description": "Dekompozycja zatwierdzonego zakresu na male zadania DAG z izolacja worktree v8.0",
+        "description": "Dekompozycja zatwierdzonego zakresu na male zadania DAG z izolacja worktree v8.3",
 
 
 
@@ -1270,7 +1270,7 @@ name: cl-plan-slice
 
 
 
-description: Dekompozycja zatwierdzonego zakresu na male zadania DAG z izolacja worktree v8.0
+description: Dekompozycja zatwierdzonego zakresu na male zadania DAG z izolacja worktree v8.3
 
 
 
@@ -1294,7 +1294,7 @@ requires_skills: cl-plan-slice
 
 
 
-# /cl-plan-slice — Podzial Zadan i Konstrukcja Grafu DAG v8.0
+# /cl-plan-slice — Podzial Zadan i Konstrukcja Grafu DAG v8.3
 
 
 
@@ -1318,7 +1318,7 @@ $ARGUMENTS
 
 
 
-        "description": "Rejestracja snapshotow zachowan Golden Record i Living Spec w projektach brownfield v8.0",
+        "description": "Rejestracja snapshotow zachowan Golden Record i Living Spec w projektach brownfield v8.3",
 
 
 
@@ -1330,7 +1330,7 @@ name: cl-characterize
 
 
 
-description: Rejestracja snapshotow zachowan Golden Record i Living Spec w projektach brownfield v8.0
+description: Rejestracja snapshotow zachowan Golden Record i Living Spec w projektach brownfield v8.3
 
 
 
@@ -1350,7 +1350,7 @@ requires_skills: cl-characterize
 
 
 
-# /cl-characterize — Golden Master Harness & Karakterystyka v8.0
+# /cl-characterize — Golden Master Harness & Karakterystyka v8.3
 
 
 
@@ -1374,7 +1374,7 @@ $ARGUMENTS
 
 
 
-        "description": "Odzyskiwanie stanu po utracie kontekstu lub awarii, weryfikacja bazy SQLite i worktree v8.0",
+        "description": "Odzyskiwanie stanu po utracie kontekstu lub awarii, weryfikacja bazy SQLite i worktree v8.3",
 
 
 
@@ -1386,7 +1386,7 @@ name: cl-resume
 
 
 
-description: Odzyskiwanie stanu po utracie kontekstu lub awarii, weryfikacja bazy SQLite i worktree v8.0
+description: Odzyskiwanie stanu po utracie kontekstu lub awarii, weryfikacja bazy SQLite i worktree v8.3
 
 
 
@@ -1406,7 +1406,7 @@ requires_skills: cl-resume
 
 
 
-# /cl-resume — Odzyskiwanie Sesji i Ciaglosci Pracy v8.0
+# /cl-resume — Odzyskiwanie Sesji i Ciaglosci Pracy v8.3
 
 
 
@@ -1427,17 +1427,17 @@ $ARGUMENTS
 
 ,
     "cl-extend.toml": {
-        "description": "Inkrementalna rozbudowa aktywnego projektu (Brownfield Managed S2-S3): wywiad sokratejski grill-me, inżynieria EARS, delta Living Charter i przyrostowy DAG w Antigravity Ultra v8.2.",
+        "description": "Inkrementalna rozbudowa aktywnego projektu (Brownfield Managed S2-S3): wywiad sokratejski grill-me, inżynieria EARS, delta Living Charter i przyrostowy DAG w Antigravity Ultra v8.3.",
         "prompt": """---
 name: cl-extend
-description: Inkrementalna rozbudowa aktywnego projektu (Brownfield Managed S2-S3): wywiad sokratejski grill-me, inżynieria EARS, delta Living Charter i przyrostowy DAG w Antigravity Ultra v8.2.
+description: Inkrementalna rozbudowa aktywnego projektu (Brownfield Managed S2-S3): wywiad sokratejski grill-me, inżynieria EARS, delta Living Charter i przyrostowy DAG w Antigravity Ultra v8.3.
 version: 8.2.0
 requires_agents: genesis-architect, spec-auditor, code-auditor, builder-executor
 requires_skills: cl-extend, grill-me, clean-code, cl-standards
 artifact_outputs: living-charter-delta, frozen-contracts, incremental-tasks-dag
 ---
 
-# /cl-extend — Inkrementalny Kompilator Projektu (v8.2)
+# /cl-extend — Inkrementalny Kompilator Projektu (v8.3)
 
 $ARGUMENTS
 
@@ -1453,17 +1453,17 @@ $ARGUMENTS
 """
     },
     "extend.toml": {
-        "description": "Inkrementalna rozbudowa aktywnego projektu (Brownfield Managed S2-S3): wywiad sokratejski grill-me, inżynieria EARS, delta Living Charter i przyrostowy DAG w Antigravity Ultra v8.2.",
+        "description": "Inkrementalna rozbudowa aktywnego projektu (Brownfield Managed S2-S3): wywiad sokratejski grill-me, inżynieria EARS, delta Living Charter i przyrostowy DAG w Antigravity Ultra v8.3.",
         "prompt": """---
 name: extend
-description: Inkrementalna rozbudowa aktywnego projektu (Brownfield Managed S2-S3): wywiad sokratejski grill-me, inżynieria EARS, delta Living Charter i przyrostowy DAG w Antigravity Ultra v8.2.
+description: Inkrementalna rozbudowa aktywnego projektu (Brownfield Managed S2-S3): wywiad sokratejski grill-me, inżynieria EARS, delta Living Charter i przyrostowy DAG w Antigravity Ultra v8.3.
 version: 8.2.0
 requires_agents: genesis-architect, spec-auditor, code-auditor, builder-executor
 requires_skills: cl-extend, grill-me, clean-code, cl-standards
 artifact_outputs: living-charter-delta, frozen-contracts, incremental-tasks-dag
 ---
 
-# /extend (aliasy: /cl-extend, /expand) — Inkrementalny Kompilator Projektu (v8.2)
+# /extend (aliasy: /cl-extend, /expand) — Inkrementalny Kompilator Projektu (v8.3)
 
 $ARGUMENTS
 
@@ -1479,16 +1479,16 @@ $ARGUMENTS
 """
     },
     "grill-me.toml": {
-        "description": "Sokratejski wywiad inżynieryjny (Socratic Questioning & Ambiguity Elimination) w Antigravity Ultra v8.2 z natywnym ask_question i eliminacją domysłów w One-Way Doors.",
+        "description": "Sokratejski wywiad inżynieryjny (Socratic Questioning & Ambiguity Elimination) w Antigravity Ultra v8.3 z natywnym ask_question i eliminacją domysłów w One-Way Doors.",
         "prompt": """---
 name: grill-me
-description: Sokratejski wywiad inżynieryjny (Socratic Questioning & Ambiguity Elimination) w Antigravity Ultra v8.2 z natywnym ask_question i eliminacją domysłów w One-Way Doors.
+description: Sokratejski wywiad inżynieryjny (Socratic Questioning & Ambiguity Elimination) w Antigravity Ultra v8.3 z natywnym ask_question i eliminacją domysłów w One-Way Doors.
 version: 8.2.0
 requires_agents: genesis-architect, challenger, spec-auditor
 requires_skills: grill-me
 ---
 
-# /grill-me — Sokratejski Wywiad Inżynieryjny v8.2
+# /grill-me — Sokratejski Wywiad Inżynieryjny v8.3
 
 $ARGUMENTS
 
@@ -1595,7 +1595,7 @@ def patch_validator_stop_dod_gate(file_path: pathlib.Path):
 
 
 
- * NEXUS Stop Gate v8.0 — Definition of Done Enforcer (Polyglot & Multi-Workspace Aware)
+ * NEXUS Stop Gate v8.3 — Definition of Done Enforcer (Polyglot & Multi-Workspace Aware)
 
 
 
@@ -3187,11 +3187,11 @@ def run():
 
 
 
-    print("  * Silnik gov.py v8.0 z FileStatCache (<130ms snapshoty) i workspace_resolver.py")
+    print("  * Silnik gov.py v8.3 z FileStatCache (<130ms snapshoty) i workspace_resolver.py")
 
 
 
-    print("  * Archiwum dystrybucyjne Antigravity_Closed_Loop_Framework_v8.0.zip")
+    print("  * Archiwum dystrybucyjne Antigravity_Closed_Loop_Framework_v8.3.zip")
 
 
 

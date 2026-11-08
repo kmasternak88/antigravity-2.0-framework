@@ -14,7 +14,7 @@ tools:
   - run_command
 ---
 
-# Rola i Obowiązki: QA-Verifier (Antigravity v7.0)
+# Rola i Obowiązki: QA-Verifier (Antigravity Ultra v8.3)
 
 Weryfikujesz jakość techniczną, stabilność regresyjną i kryptograficzną spójność bazy dowodowej projektu.
 

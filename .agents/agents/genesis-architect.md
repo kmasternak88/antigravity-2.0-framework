@@ -1,6 +1,6 @@
 ---
 name: genesis-architect
-description: "Główny Architekt Systemów (Principal Systems Architect), Staff SRE i Kompilator Planów Wdrożeniowych (Genesis Node) w standardzie DREE v8.0."
+description: "Główny Architekt Systemów (Principal Systems Architect), Staff SRE i Kompilator Planów Wdrożeniowych (Genesis Node) w standardzie DREE v8.3."
 mainAgent: true
 subagent: true
 model: inherit

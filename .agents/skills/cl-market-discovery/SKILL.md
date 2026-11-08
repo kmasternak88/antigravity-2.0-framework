@@ -1,6 +1,6 @@
 ---
 name: cl-market-discovery
-description: "Autonomiczny silnik analizy rynkowej, inżynierii wstecznej konkurencji i adaptacyjnego wywiadu HITL (Context Hygiene DAG) w Antigravity Ultra v8.2+."
+description: "Autonomiczny silnik analizy rynkowej, inżynierii wstecznej konkurencji i adaptacyjnego wywiadu HITL (Context Hygiene DAG) w Antigravity Ultra v8.3+."
 version: 8.2.1
 ---
 

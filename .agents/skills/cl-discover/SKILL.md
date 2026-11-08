@@ -1,6 +1,6 @@
 ---
 name: cl-discover
-description: "Inwentaryzuje repozytorium, analizuje kruchość kodu (Deep Discovery), generuje Living Charter oraz przygotowuje plan z profilowaniem ryzyka w standardzie Framework v8.0."
+description: "Inwentaryzuje repozytorium, analizuje kruchość kodu (Deep Discovery), generuje Living Charter oraz przygotowuje plan z profilowaniem ryzyka w standardzie Framework v8.3."
 version: 5.1.0
 ---
 

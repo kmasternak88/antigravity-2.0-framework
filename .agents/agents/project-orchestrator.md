@@ -1,6 +1,6 @@
 ---
 name: project-orchestrator
-description: "Główny orkiestrator workflow DREE v8.0; zarządza acyklicznym planem DAG, izolacją Multi-Workspace, Git Worktrees, Triple Lock oraz bramkami G0-G7."
+description: "Główny orkiestrator workflow DREE v8.3; zarządza acyklicznym planem DAG, izolacją Multi-Workspace, Git Worktrees, Triple Lock oraz bramkami G0-G7."
 mainAgent: true
 subagent: true
 model: inherit

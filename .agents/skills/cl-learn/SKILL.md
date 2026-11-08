@@ -1,11 +1,11 @@
 ---
 name: cl-learn
-description: "Kodyfikacja wiedzy z aktywnej sesji (G-LEARN v8.0): destylacja wniosków, kwarantanna w learning_inbox, audyt check-rules, integracja z Mem0 i Słownikiem Danych SSoT."
+description: "Kodyfikacja wiedzy z aktywnej sesji (G-LEARN v8.3): destylacja wniosków, kwarantanna w learning_inbox, audyt check-rules, integracja z Mem0 i Słownikiem Danych SSoT."
 version: 8.0.0
 trigger: model_decision
 ---
 
-# /cl-learn — Kodyfikacja Wiedzy i Ewolucja Standardów (G-LEARN v8.0)
+# /cl-learn — Kodyfikacja Wiedzy i Ewolucja Standardów (G-LEARN v8.3)
 
 Protokół ciągłego uczenia się frameworka i repozytorium. Przekształca incydenty, poprawki deweloperskie i odkryte wzorce w trwałe zasoby projektowe bez ryzyka zatrucia kontekstu (*Epistemic Contamination*).
 
@@ -35,7 +35,7 @@ Wymagany nagłówek YAML frontmatter:
 ```yaml
 ---
 trigger: model_decision
-description: "Kodyfikacja wiedzy z aktywnej sesji (G-LEARN v8.0): destylacja wniosków, kwarantanna w learning_inbox, audyt check-rules, integracja z Mem0 i Słownikiem Danych SSoT."
+description: "Kodyfikacja wiedzy z aktywnej sesji (G-LEARN v8.3): destylacja wniosków, kwarantanna w learning_inbox, audyt check-rules, integracja z Mem0 i Słownikiem Danych SSoT."
 ---
 ```
 Treść reguły:

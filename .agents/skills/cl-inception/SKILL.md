@@ -1,6 +1,6 @@
 ---
 name: cl-inception
-description: "Greenfield Idea Inception & Stress-Testing Loop dla Antigravity Ultra v8.0. Przekształca surowy pomysł w ścisłe kontrakty, konfiguruje profile standardów projektowych DREE, identyfikuje One-Way Doors i generuje acykliczny plan DAG."
+description: "Greenfield Idea Inception & Stress-Testing Loop dla Antigravity Ultra v8.3. Przekształca surowy pomysł w ścisłe kontrakty, konfiguruje profile standardów projektowych DREE, identyfikuje One-Way Doors i generuje acykliczny plan DAG."
 version: 5.1.0
 ---
 

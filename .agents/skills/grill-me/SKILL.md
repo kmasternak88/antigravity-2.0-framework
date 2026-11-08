@@ -1,6 +1,6 @@
 ---
 name: grill-me
-description: "Sokratejski wywiad inżynieryjny (Socratic Questioning & Ambiguity Elimination) w Antigravity Ultra v8.2. Wymusza eliminację domysłów w One-Way Doors, inwariantach finansowych (Rule 50 DREE: integer cents), kontraktach API, odporności SRE i granicach EARS za pomocą natywnych pytań ask_question."
+description: "Sokratejski wywiad inżynieryjny (Socratic Questioning & Ambiguity Elimination) w Antigravity Ultra v8.3. Wymusza eliminację domysłów w One-Way Doors, inwariantach finansowych (Rule 50 DREE: integer cents), kontraktach API, odporności SRE i granicach EARS za pomocą natywnych pytań ask_question."
 version: 8.2.0
 ---
 
@@ -72,7 +72,7 @@ W środowisku Antigravity 2.0 agent wywołuje natywny mechanizm `ask_question` d
     },
     {
       "id": "opt_decimal_float",
-      "label": "[B] Typ float / double (Niedozwolone w standardzie Ultra v8.2)",
+      "label": "[B] Typ float / double (Niedozwolone w standardzie Ultra v8.3)",
       "recommended": false,
       "trade_off": "Prowadzi do nieodwracalnych rozbieżności księgowych w bazie danych."
     },

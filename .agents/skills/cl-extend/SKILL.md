@@ -1,6 +1,6 @@
 ---
 name: cl-extend
-description: "Inkrementalna rozbudowa aktywnych projektów (Brownfield Managed / In-Flight S2-S3) w Antigravity Ultra v8.2. Integruje tryb sokratejski /grill-me, inżynierię wymagań EARS, triady Gherkin, aktualizację Living Charter (specs/01-04), zamrożone kontrakty oraz przyrostową kompilację DAG (tasks.json)."
+description: "Inkrementalna rozbudowa aktywnych projektów (Brownfield Managed / In-Flight S2-S3) w Antigravity Ultra v8.3. Integruje tryb sokratejski /grill-me, inżynierię wymagań EARS, triady Gherkin, aktualizację Living Charter (specs/01-04), zamrożone kontrakty oraz przyrostową kompilację DAG (tasks.json)."
 version: 8.2.0
 ---
 

@@ -1,6 +1,6 @@
 ---
 name: cl-spec-audit
-description: "Audytuje specyfikację, graf zadań DAG, kontrakty danych oraz testowalność przed nałożeniem kryptograficznej blokady Spec Lock (G1/G2) w standardzie v8.0."
+description: "Audytuje specyfikację, graf zadań DAG, kontrakty danych oraz testowalność przed nałożeniem kryptograficznej blokady Spec Lock (G1/G2) w standardzie v8.3."
 version: 5.1.0
 ---
 

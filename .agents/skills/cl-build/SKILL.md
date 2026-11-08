@@ -1,6 +1,6 @@
 ---
 name: cl-build
-description: "Implementuje jeden zatwierdzony task w odizolowanym worktree z zachowaniem Standardu 7 Niezmienników DREE v8.0 i przygotowuje dowody wykonania."
+description: "Implementuje jeden zatwierdzony task w odizolowanym worktree z zachowaniem Standardu 7 Niezmienników DREE v8.3 i przygotowuje dowody wykonania."
 version: 5.1.0
 ---
 

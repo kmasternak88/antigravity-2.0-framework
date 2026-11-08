@@ -1,6 +1,6 @@
 ---
 name: cl-review
-description: "Wykonuje niezależny przegląd kodu (G5), audyt mutacyjny (Mock-Breaker) i semantyczny interlock przed scaleniem do gałęzi głównej w standardzie v8.0."
+description: "Wykonuje niezależny przegląd kodu (G5), audyt mutacyjny (Mock-Breaker) i semantyczny interlock przed scaleniem do gałęzi głównej w standardzie v8.3."
 version: 5.1.0
 ---
 
