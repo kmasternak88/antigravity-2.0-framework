@@ -65,14 +65,15 @@ def _extract_reqs(prd_path: Path) -> List[str]:
     if not prd_path.exists():
         return []
     content = prd_path.read_text(encoding="utf-8")
-    return list(set(re.findall(r'(REQ-\d{3})', content)))
+    return list(set(re.findall(r'(REQ-\d{3,5})', content)))
 
 
 def _check_single_req(req: str, spec_text: str, test_contents: List[str]) -> Optional[str]:
     if req not in spec_text:
         return f"UNCOVERED_PRD_REQUIREMENTS: {req} missing in specs."
+    pattern = rf'(?:@test_req\("{re.escape(req)}"\)|\b{re.escape(req)}\b)'
     for tc in test_contents:
-        if f'@test_req("{req}")' in tc or req in tc:
+        if re.search(pattern, tc):
             return None
     return f"UNCOVERED_PRD_REQUIREMENTS: {req} missing in tests."
 

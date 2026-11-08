@@ -70,3 +70,18 @@
 | `discovery_checkpoints` | `checkpoint_id TEXT` | `FOREIGN KEY (run_id) REFERENCES discovery_runs(run_id)` | Nienaruszalne punkty kontrolne etapów discovery |
 | `task_iterations` | `task TEXT, iteration INTEGER` | `builder_actor`, `supervisor_actor`, `status` | Dziennik iteracji pętli doskonalenia kodu (self-healing loop) |
 | `task_supervision_logs` | `log_id TEXT` | `task`, `supervisor_session`, `verdict` | Niezależny rejestr audytów i werdyktów task-supervisora |
+| ErrorScenario | class | tools/prd_parser.py |
+| FinancialMetric | class | tools/prd_parser.py |
+| KPIMetric | class | tools/prd_parser.py |
+| NFRMetric | class | tools/prd_parser.py |
+| PRDMetadata | class | tools/prd_parser.py |
+| PRDParseError | class | tools/prd_parser.py |
+| PRDParser | class | tools/prd_parser.py |
+| PRDValidationError | class | tools/prd_parser.py |
+| ParsedPRD | class | tools/prd_parser.py |
+| Persona | class | tools/prd_parser.py |
+| Requirement | class | tools/prd_parser.py |
+| RiskItem | class | tools/prd_parser.py |
+| StrategicParameter | class | tools/prd_parser.py |
+| TelemetryEvent | class | tools/prd_parser.py |
+| UserFlow | class | tools/prd_parser.py |
