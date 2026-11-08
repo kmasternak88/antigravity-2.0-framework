@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Run configured global checks on the CI candidate; workspace-aware and hermetic."""
-import importlib.util, json, os, subprocess, sys, time
+import importlib.util, json, os, subprocess, sys, time, re
 from pathlib import Path
+from typing import Optional, Tuple, List
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -60,6 +61,55 @@ g = importlib.util.module_from_spec(s)
 s.loader.exec_module(g)
 
 
+def verify_prd_traceability(
+    prd_path: Optional[Path] = None,
+    specs_dir: Optional[Path] = None,
+    tests_dir: Optional[Path] = None
+) -> Tuple[bool, List[str]]:
+    """G6 Gate: Verify every REQ-XXX in PRD is mapped in specs and tested."""
+    prd_path = prd_path or ROOT / "specs/00_PRD.md"
+    specs_dir = specs_dir or ROOT / "specs"
+    tests_dir = tests_dir or ROOT / "tests"
+
+    if not prd_path.exists():
+        return True, []
+
+    content = prd_path.read_text(encoding="utf-8")
+    reqs = re.findall(r'(REQ-\d{3})', content)
+    reqs = list(set(reqs))
+
+    matrix_path = specs_dir / "05_TRACEABILITY_MATRIX.md"
+    reqs_spec_path = specs_dir / "01_PRODUCT_REQUIREMENTS.md"
+
+    matrix_content = matrix_path.read_text(encoding="utf-8") if matrix_path.exists() else ""
+    reqs_spec_content = reqs_spec_path.read_text(encoding="utf-8") if reqs_spec_path.exists() else ""
+
+    missing = []
+
+    test_files = list(tests_dir.rglob("*.py"))
+    test_contents = [f.read_text(encoding="utf-8") for f in test_files]
+
+    for req in reqs:
+        # Check in specs
+        if req not in matrix_content and req not in reqs_spec_content:
+            missing.append(f"UNCOVERED_PRD_REQUIREMENTS: {req} missing in specs.")
+            continue
+
+        # Check in tests
+        found_in_tests = False
+        for tc in test_contents:
+            if f'@test_req("{req}")' in tc or req in tc:
+                found_in_tests = True
+                break
+
+        if not found_in_tests:
+             missing.append(f"UNCOVERED_PRD_REQUIREMENTS: {req} missing in tests.")
+
+    if missing:
+        return False, missing
+    return True, []
+
+
 def main():
     g.validate()
     cfg = g.config()
@@ -67,6 +117,13 @@ def main():
     reports = []
     dest = ROOT / '.governance/evidence/ci'
     dest.mkdir(parents=True, exist_ok=True)
+
+    # Check PRD traceability first (G6)
+    is_traceable, trace_errors = verify_prd_traceability()
+    if not is_traceable:
+        print("\n".join(trace_errors), file=sys.stderr)
+        return 1
+
     for name in cfg['required_release_checks']:
         ck = cfg['checks'][name]
         started = time.time()
