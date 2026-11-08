@@ -2235,6 +2235,49 @@ if __name__ == "__main__":
         ]
     }
 
+def lint_completeness(tasks_file=None, profile='production'):
+    """Gate G1.5: Validates tasks against the 8-Vector Production Completeness Lens."""
+    t_path = Path(tasks_file).resolve() if tasks_file else ROOT / '.governance/tasks.json'
+    if not t_path.is_file():
+        raise Rejected(f"Tasks file not found: {t_path}")
+    data = json.loads(t_path.read_text(encoding='utf-8'))
+    tasks = data.get('tasks', [])
+    if not tasks:
+        raise Rejected("No tasks found in tasks.json")
+
+    VECTORS = {
+        "IDEMPOTENCY": ["idemp", "transaction", "replay", "atomic", "lock", "crdt"],
+        "SECURITY": ["auth", "rate", "sanitize", "xss", "csrf", "security", "token", "password", "jwt"],
+        "RESILIENCE": ["timeout", "retry", "circuit", "error", "exception", "domain_exception", "dlq", "failure"],
+        "DATABASE": ["db", "database", "schema", "migration", "constraint", "table", "model", "foreign_key", "sql"],
+        "SRE_OBSERVABILITY": ["health", "ready", "metric", "log", "telemetry", "tracing", "audit", "correlation"],
+        "CONFIGURATION": ["config", "env", "secret", "validation", "setting", "fail_fast"],
+        "UX_EDGE_STATES": ["empty", "loading", "error_state", "a11y", "wcag", "48px", "touch", "cls", "skeleton"],
+        "ADVERSARIAL_TESTS": ["dual_test_suite", "negative", "adversarial", "mutation", "mock_breaker", "boundary"]
+    }
+
+    covered_vectors = set()
+    for t in tasks:
+        blob = f"{t.get('id', '')} {t.get('title', '')} {' '.join(t.get('checks', []))} {' '.join(t.get('acceptance', []))} {' '.join(t.get('standards_checklist', []))} {' '.join(t.get('required_skills', []))}".lower()
+        for v_name, keywords in VECTORS.items():
+            if any(k in blob for k in keywords):
+                covered_vectors.add(v_name)
+
+    prof = profile.lower()
+    req_count = 5 if prof == "production" else (7 if prof == "mission-critical" else 2)
+    missing = [v for v in VECTORS.keys() if v not in covered_vectors]
+    status = "PASS" if len(covered_vectors) >= req_count else "BLOCKED_INCOMPLETE"
+    res = {
+        "evidenceType": "G1_5_COMPLETENESS", "status": status, "profile": prof,
+        "totalTasks": len(tasks), "coveredVectors": sorted(list(covered_vectors)),
+        "coveredCount": len(covered_vectors), "requiredCount": req_count,
+        "missingVectors": missing, "exitCode": 0 if status == "PASS" else 1
+    }
+    ev_dir = ROOT / '.governance/evidence'
+    ev_dir.mkdir(parents=True, exist_ok=True)
+    (ev_dir / 'G1_5_COMPLETENESS.json').write_text(json.dumps(res, indent=2), encoding='utf-8')
+    return res
+
 def check_standards(task_id: Optional[str] = None, file_path: Optional[str] = None):
     """Static AST Diff & Standards Linter (G4 Gate): verifies type annotations, SRP <= 40, no bare except, forbidden patterns, test linkage."""
     std_cfg = standards_config()
@@ -3246,6 +3289,10 @@ def main():
     a = sub.add_parser('prune-evidence')
     a.add_argument('--keep', type=int, default=5)
 
+    a = sub.add_parser('lint-completeness')
+    a.add_argument('--profile', choices=['lean', 'production', 'mission-critical'], default='production')
+    a.add_argument('--tasks', default=None)
+
     a = sub.add_parser('check-rules')
     a.add_argument('--candidate', default=None)
 
@@ -3299,6 +3346,7 @@ def main():
         elif cmd == 'wire-template': result = wire_template(args.file, blueprint_id=args.blueprint)
         elif cmd == 'check-templates': result = check_templates(task_id=args.task, file_path=args.file)
         elif cmd == 'prune-evidence': result = prune_evidence(keep_last=args.keep)
+        elif cmd == 'lint-completeness': result = lint_completeness(tasks_file=args.tasks, profile=args.profile)
         elif cmd == 'check-rules': result = check_rules(candidate_file=args.candidate)
         elif cmd == 'approve-rule': result = approve_rule(candidate_name=args.candidate)
         else: result = {'status': 'UNKNOWN_COMMAND'}

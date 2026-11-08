@@ -98,3 +98,9 @@
 | ImmunizationState | class | tools/immunization_engine.py |
 | ImmunizationResult | class | tools/immunization_engine.py |
 | ImmunizationEngine | class | tools/immunization_engine.py |
+| AnticipatoryExpansionError | class | tools/anticipatory_expander.py |
+| UnknownArchetypeError | class | tools/anticipatory_expander.py |
+| AnticipatedRequirement | class | tools/anticipatory_expander.py |
+| ArchetypeDefinition | class | tools/anticipatory_expander.py |
+| ExpansionResult | class | tools/anticipatory_expander.py |
+| AnticipatoryExpander | class | tools/anticipatory_expander.py |
