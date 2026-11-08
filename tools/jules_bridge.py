@@ -41,6 +41,7 @@ __all__ = [
     "JulesBridgeClient",
     "format_feedback_packet_to_prompt",
     "audit_jules_plan",
+    "audit_deployment_plan",
     "main",
 ]
 
@@ -103,6 +104,7 @@ class JulesSessionRequest:
     require_plan_approval: bool = True
     allowed_paths: List[str] = field(default_factory=list)
     contract_paths: List[str] = field(default_factory=list)
+    is_deployment: bool = False
 
 
 class JulesMCPClientInterface:
@@ -219,6 +221,10 @@ class MockJulesMCPClient(JulesMCPClientInterface):
         elif name in ("list_activities", "list_all_activities"):
             s_id = arguments.get("session_id")
             return {"activities": self.activities.get(s_id, [])}
+        elif name == "deploy_pipeline":
+            return {"status": "SUCCESS", "message": "Mock deployment executed."}
+        elif name == "verify_health":
+            return {"status": "SUCCESS", "message": "Mock health check passed."}
         else:
             raise JulesBridgeError(f"Unknown MCP tool: {name}")
 
@@ -272,6 +278,65 @@ def audit_jules_plan(
             "2. Treat contracts/ as frozen interfaces; do not modify contract definitions.\n"
             "3. Include a comprehensive test suite (happy-path + negative/boundary assertions).\n"
             "Please revise your plan and submit an updated plan for supervisor approval."
+        )
+        return JulesPlanAuditResult(
+            approved=False,
+            status="REJECTED_PLAN",
+            violations=violations,
+            remediation_prompt=remediation
+        )
+
+    return JulesPlanAuditResult(
+        approved=True,
+        status="APPROVED",
+        violations=[],
+        remediation_prompt=""
+    )
+
+
+def audit_deployment_plan(
+    plan_text: str,
+    protected_configs: Optional[List[str]] = None
+) -> JulesPlanAuditResult:
+    """Socratically audits a proposed Jules deployment plan against security and operational policies.
+
+    Checks:
+    1. Rollback Procedure: Must declare a rollback strategy.
+    2. Smoke Tests: Must include post-deployment verification.
+    3. Zero-Downtime Policy: Must state the deployment will not cause downtime.
+    4. Config Immutability: Must not modify protected configs without explicit handling.
+    """
+    violations: List[str] = []
+    lower_plan = plan_text.lower()
+
+    if "rollback" not in lower_plan:
+        violations.append("MISSING_ROLLBACK_PROCEDURE: Plan does not contain a rollback strategy.")
+    if "smoke" not in lower_plan and "health check" not in lower_plan and "verify_health" not in lower_plan:
+        violations.append("MISSING_SMOKE_TESTS: Plan fails to mention smoke tests or health checks post-deployment.")
+    if "zero-downtime" not in lower_plan and "zero downtime" not in lower_plan and "rolling" not in lower_plan:
+        violations.append("ZERO_DOWNTIME_VIOLATION: Plan must explicitly declare a zero-downtime or rolling update strategy.")
+
+    protected = {Path(p).as_posix().lower() for p in (protected_configs or [])}
+    raw_tokens = re.findall(r'[\w\-\./]+\.[a-zA-Z0-9]+', plan_text)
+    candidate_paths = {Path(t.strip("`'\"")).as_posix().lower() for t in raw_tokens if "/" in t}
+
+    for p in candidate_paths:
+        if p in protected:
+            violations.append(
+                f"PROTECTED_CONFIG_TAMPERING: Plan proposes modifying protected config '{p}'. Modifying SecretShield boundaries is forbidden."
+            )
+
+    if violations:
+        remediation = (
+            "[SUPERVISOR DEPLOYMENT PLAN REJECTION - SOCRATIC AUDIT]\n"
+            "Your proposed deployment plan has been evaluated and REJECTED due to policy violations:\n"
+            + "\n".join(f"- {v}" for v in violations) + "\n\n"
+            "Actionable Instructions:\n"
+            "1. Define a clear rollback procedure.\n"
+            "2. Include smoke tests / health checks.\n"
+            "3. Ensure the strategy is zero-downtime.\n"
+            "4. Do not modify protected configuration files.\n"
+            "Please revise your deployment plan and submit an updated plan for supervisor approval."
         )
         return JulesPlanAuditResult(
             approved=False,
@@ -419,15 +484,24 @@ class JulesBridgeClient:
             plan_iteration = 1
             plan_approved = False
 
+            # Check if this is a deployment request
+            is_deployment = getattr(request, 'is_deployment', False)
+
             while plan_iteration <= max_plan_iterations:
                 session_data = self.mcp.call_tool("get_session", {"session_id": session_id})
                 plan_text = session_data.get("plan") or "1. Implement vertical slice within allowed files."
 
-                audit_res = audit_jules_plan(
-                    plan_text=plan_text,
-                    allowed_paths=request.allowed_paths,
-                    contract_paths=request.contract_paths
-                )
+                if is_deployment:
+                    audit_res = audit_deployment_plan(
+                        plan_text=plan_text,
+                        protected_configs=request.contract_paths
+                    )
+                else:
+                    audit_res = audit_jules_plan(
+                        plan_text=plan_text,
+                        allowed_paths=request.allowed_paths,
+                        contract_paths=request.contract_paths
+                    )
 
                 if audit_res.approved:
                     self.mcp.call_tool("approve_session_plan", {"session_id": session_id})

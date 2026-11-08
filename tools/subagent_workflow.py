@@ -723,7 +723,8 @@ class MultiSubagentOrchestrator:
         max_iterations: int = 3,
         builder_remediation_hook: Optional[Callable[[int, FeedbackPacket, Path], None]] = None,
         executor_engine: Optional[str] = None,
-        jules_bridge: Optional[Any] = None
+        jules_bridge: Optional[Any] = None,
+        is_deployment: bool = False
     ) -> SubagentWorkflowResult:
         """Executes full three-tier teamwork lifecycle for task_id."""
         sup_actor = supervisor_actor or auditor_actor or "agent:task-supervisor"
@@ -758,12 +759,18 @@ class MultiSubagentOrchestrator:
             try:
                 from tools.jules_bridge import JulesSessionRequest
                 branch = bridge_instance.push_task_branch_upstream(task_id)
+                prompt = (
+                    f"Deploy task {task_id} according to deployment manifest and policies."
+                    if is_deployment
+                    else f"Implement task {task_id} according to TASK_BRIEF.md and contracts/ adhering to DREE standards."
+                )
                 disp_res = bridge_instance.dispatch_and_supervise_task(JulesSessionRequest(
                     task_id=task_id,
-                    prompt=f"Implement task {task_id} according to TASK_BRIEF.md and contracts/ adhering to DREE standards.",
+                    prompt=prompt,
                     source=bridge_instance.config.default_source or f"sources/{task_id}",
                     starting_branch=branch,
-                    require_plan_approval=True
+                    require_plan_approval=True,
+                    is_deployment=is_deployment
                 ))
                 jules_sess_id = disp_res.get("session_id")
                 bridge_instance.fetch_task_branch_downstream(task_id)
@@ -802,6 +809,13 @@ class MultiSubagentOrchestrator:
         gate_status, interlock_passed, finished = self._finish_task_gates(
             task_id, fencing_token, auto_interlock_and_finish
         )
+
+        if is_deployment and auto_interlock_and_finish and finished:
+            try:
+                # In deployment mode, finishing the task equates to G7 Release
+                self._run_gov(["release"])
+            except Exception as release_err:
+                logger.warning("G7 release failed after deployment task finish: %s", release_err)
         return SubagentWorkflowResult(
             task_id=task_id, status="SUCCESS" if finished else "REVIEWED",
             builder_actor=builder_actor, supervisor_actor=sup_actor, orchestrator_actor=orchestrator_actor,
@@ -833,6 +847,7 @@ def _handle_cli_swarm(orchestrator: MultiSubagentOrchestrator, concurrency: int,
 
 
 def _handle_cli_task(orchestrator: MultiSubagentOrchestrator, args: argparse.Namespace) -> None:
+    is_deployment = getattr(args, 'mode', None) == 'deploy' or getattr(args, 'deployment', False)
     res = orchestrator.execute_task_lifecycle(
         task_id=args.task,
         builder_actor=args.builder,
@@ -840,7 +855,8 @@ def _handle_cli_task(orchestrator: MultiSubagentOrchestrator, args: argparse.Nam
         orchestrator_actor=args.orchestrator,
         auto_interlock_and_finish=not args.no_finish,
         max_iterations=args.max_cycles,
-        executor_engine=args.executor
+        executor_engine=args.executor,
+        is_deployment=is_deployment
     )
     payload = json.dumps({
         "status": res.status,
@@ -868,6 +884,8 @@ def main() -> None:
     parser.add_argument("--no-finish", action="store_true", help="Stop before final orchestrator finish")
     parser.add_argument("--max-cycles", type=int, default=3, help="Max self-healing cycles (default 3)")
     parser.add_argument("--executor", choices=["local", "jules"], default="local", help="Builder execution engine (local or jules)")
+    parser.add_argument("--deployment", action="store_true", help="Run in deployment mode (connects G7 release with PR / task finish)")
+    parser.add_argument("--mode", choices=["deploy"], help="Orchestrator mode (e.g. deploy)")
     args = parser.parse_args()
 
     orchestrator = MultiSubagentOrchestrator(workspace_root=Path(args.workspace) if args.workspace else None)
